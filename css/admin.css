@@ -1,0 +1,149 @@
+.admin-main {
+  padding: 40px 0;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 30px;
+}
+
+.admin-sidebar {
+  background-color: white;
+  border-radius: var(--border-radius);
+  position: sticky;
+  padding: 20px;
+  top: 100px;
+  align-self: start;
+}
+
+.sidebar-menu li {
+  font-size: 17px;
+  margin-bottom: 5px;
+}
+
+.admin-content {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 30px;
+  box-shadow: var(--box-shadow);
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.admin-title {
+  font-size: 1.8rem;
+}
+
+.admin-filters {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.admin-filters .form-group {
+  min-width: 200px;
+  flex: 1;
+}
+
+.admin-table-container {
+  overflow-x: scroll;
+  margin-bottom: 30px;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--light-gray);
+}
+
+.admin-table th {
+  font-weight: 500;
+  background-color: var(--light-gray);
+  position: sticky;
+  top: 0;
+}
+
+.employee-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.employee-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.employee-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.pagination-info {
+  color: var(--gray-color);
+}
+
+.mb-1 {
+  margin-bottom: 10px;
+}
+
+.btn-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .admin-grid {
+    display: block;
+  }
+
+  .admin-sidebar {
+    position: static;
+    margin-bottom: 20px;
+  }
+
+  .admin-filters {
+    flex-direction: column;
+  }
+
+  .admin-filters .form-group {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .admin-header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: start;
+    justify-content: start;
+    margin-bottom: 30px;
+  }
+}

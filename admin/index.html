@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JetTraker - Администрирование</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header__inner">
+        <a href="/index.html" class="logo">
+          <span>JetTraker</span>
+        </a>
+
+        <nav class="nav">
+          <a href="/index.html" class="nav__link">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span>Главная</span>
+          </a>
+          <a href="/schedule.html" class="nav__link">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M8 7V3M16 7V3M7 11H17M5 21H19C20.1046 21 21 20.1046 21 19V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7V19C3 20.1046 3.89543 21 5 21Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span>График</span>
+          </a>
+          <a href="/salary.html" class="nav__link">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 1V23M17 5H9.5C8.57174 5 7.6815 5.36875 7.02513 6.02513C6.36875 6.6815 6 7.57174 6 8.5C6 9.42826 6.36875 10.3185 7.02513 10.9749C7.6815 11.6313 8.57174 12 9.5 12H14.5C15.4283 12 16.3185 12.3687 16.9749 13.0251C17.6313 13.6815 18 14.5717 18 15.5C18 16.4283 17.6313 17.3185 16.9749 17.9749C16.3185 18.6313 15.4283 19 14.5 19H6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span>Зарплата</span>
+          </a>
+          <a href="/dashboard" class="nav__link">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21M12.5 7C12.5 9.20914 10.7091 11 8.5 11C6.29086 11 4.5 9.20914 4.5 7C4.5 4.79086 6.29086 3 8.5 3C10.7091 3 12.5 4.79086 12.5 7Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span>Кабинет</span>
+          </a>
+        </nav>
+
+        <div class="auth-buttons">
+          <a href="/auth.html?action=login" class="btn btn--outline auth-btn"
+            >Вход</a
+          >
+          <a href="/auth.html?action=register" class="btn btn--primary auth-btn"
+            >Регистрация</a
+          >
+        </div>
+
+        <div class="user-menu">
+          <div class="user-menu__avatar">
+            <img src="assets/avatar-placeholder.png" alt="Аватар" />
+          </div>
+          <div class="user-menu__name">Иван Иванов</div>
+          <div class="user-menu__dropdown">
+            <a id="dashboard-link" href="/dashboard">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21M12.5 7C12.5 9.20914 10.7091 11 8.5 11C6.29086 11 4.5 9.20914 4.5 7C4.5 4.79086 6.29086 3 8.5 3C10.7091 3 12.5 4.79086 12.5 7Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              Личный кабинет
+            </a>
+            <a href="/admin" id="admin-link" style="display: none">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M10.325 4.317C10.751 2.561 13.249 2.561 13.675 4.317C13.861 5.104 14.633 5.61 15.42 5.49C17.208 5.22 18.78 6.792 18.51 8.58C18.39 9.367 18.896 10.139 19.683 10.325C21.439 10.751 21.439 13.249 19.683 13.675C18.896 13.861 18.39 14.633 18.51 15.42C18.78 17.208 17.208 18.78 15.42 18.51C14.633 18.39 13.861 18.896 13.675 19.683C13.249 21.439 10.751 21.439 10.325 19.683C10.139 18.896 9.367 18.39 8.58 18.51C6.792 18.78 5.22 17.208 5.49 15.42C5.61 14.633 5.104 13.861 4.317 13.675C2.561 13.249 2.561 10.751 4.317 10.325C5.104 10.139 5.61 9.367 5.49 8.58C5.22 6.792 6.792 5.22 8.58 5.49C9.367 5.61 10.139 5.104 10.325 4.317Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              Админ-панель
+            </a>
+            <a href="#" id="logout-btn">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13 12H22M22 12L18.6667 8M22 12L18.6667 16"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M14 7V5.173C14 4.232 13.096 3.55 12.208 3.791L4 6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M18 21H6C4.895 21 4 20.105 4 19V12V5C4 3.895 4.895 3 6 3H10"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              Выйти
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <div class="container">
+        <div class="admin-grid">
+          <aside class="admin-sidebar">
+            <div class="sidebar-widget">
+              <h3 class="sidebar-widget__title mb-1">Администрирование</h3>
+              <ul class="sidebar-menu">
+                <li><a href="requests.html">Заявки</a></li>
+                <li><a href="settings.html">Настройки компании</a></li>
+                <li><a href="vacation.html">Отпуски</a></li>
+                <li>
+                  <a id="admin-notifications" href="notifications.html"
+                    >Уведомления</a
+                  >
+                </li>
+                <li><a href="/subscription.html">Подписка</a></li>
+                <li><a href="/help.html">Обучение</a></li>
+              </ul>
+            </div>
+          </aside>
+
+          <div class="admin-content">
+            <div class="admin-header">
+              <h1 class="admin-title">Управление сотрудниками</h1>
+              <div class="admin-actions">
+                <button class="btn btn--primary" id="add-employee-btn">
+                  Добавить сотрудника
+                </button>
+              </div>
+            </div>
+
+            <div class="admin-filters">
+              <div class="form-group">
+                <label for="employee-department-filter">Подразделение</label>
+                <select id="employee-department-filter">
+                  <option value="all">Все подразделения</option>
+                  <option value="sales">Отдел продаж</option>
+                  <option value="support">Служба поддержки</option>
+                  <option value="hr">HR</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="employee-position-filter">Должность</label>
+                <select id="employee-position-filter">
+                  <option value="all">Все должности</option>
+                  <option value="manager">Менеджер</option>
+                  <option value="specialist">Специалист</option>
+                  <option value="part-time">Парт-тайм</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="employee-search">Поиск</label>
+                <input
+                  type="text"
+                  id="employee-search"
+                  placeholder="Имя, email..."
+                />
+              </div>
+            </div>
+
+            <div class="admin-table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Имя</th>
+                    <th>Должность</th>
+                    <th>Подразделение</th>
+                    <th>Роль</th>
+                    <th>Статус</th>
+                    <th>Действия</th>
+                  </tr>
+                </thead>
+                <tbody id="employees-table">
+                  <!-- <tr>
+                    <td>
+                      <div class="employee-cell">
+                        <img
+                          src="assets/avatar-placeholder.png"
+                          alt="Иван Иванов"
+                          class="employee-avatar"
+                        />
+                        <span>Иван Иванов</span>
+                      </div>
+                    </td>
+                    <td>Менеджер</td>
+                    <td>Отдел продаж</td>
+                    <td>Менеджер</td>
+                    <td><span class="status-badge active">Активен</span></td>
+                    <td class="btn-block">
+                      <button class="btn btn--sm btn--outline">
+                        Редактировать
+                      </button>
+                      <button class="btn btn--sm btn--danger">Удалить</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="employee-cell">
+                        <img
+                          src="assets/avatar-placeholder.png"
+                          alt="Петр Петров"
+                          class="employee-avatar"
+                        />
+                        <span>Петр Петров</span>
+                      </div>
+                    </td>
+                    <td>Специалист</td>
+                    <td>Служба поддержки</td>
+                    <td>Сотрудник</td>
+                    <td><span class="status-badge active">Активен</span></td>
+                    <td class="btn-block">
+                      <button class="btn btn--sm btn--outline">
+                        Редактировать
+                      </button>
+                      <button class="btn btn--sm btn--danger">Удалить</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="employee-cell">
+                        <img
+                          src="assets/avatar-placeholder.png"
+                          alt="Анна Сидорова"
+                          class="employee-avatar"
+                        />
+                        <span>Анна Сидорова</span>
+                      </div>
+                    </td>
+                    <td>Парт-тайм</td>
+                    <td>Отдел продаж</td>
+                    <td>Сотрудник</td>
+                    <td><span class="status-badge active">Активен</span></td>
+                    <td class="btn-block">
+                      <button class="btn btn--sm btn--outline">
+                        Редактировать
+                      </button>
+                      <button class="btn btn--sm btn--danger">Удалить</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="employee-cell">
+                        <img
+                          src="assets/avatar-placeholder.png"
+                          alt="Мария Иванова"
+                          class="employee-avatar"
+                        />
+                        <span>Мария Иванова</span>
+                      </div>
+                    </td>
+                    <td>HR</td>
+                    <td>HR</td>
+                    <td>Менеджер</td>
+                    <td>
+                      <span class="status-badge inactive">Неактивен</span>
+                    </td>
+                    <td class="btn-block">
+                      <button class="btn btn--sm btn--outline">
+                        Редактировать
+                      </button>
+                      <button class="btn btn--sm btn--danger">Удалить</button>
+                    </td>
+                  </tr> -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="admin-pagination">
+              <button class="btn btn--outline" disabled>Назад</button>
+              <span class="pagination-info">Страница 1 из 1</span>
+              <button class="btn btn--outline" disabled>Вперед</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Модальное окно добавления сотрудника -->
+    <div class="modal" id="employee-modal">
+      <div class="modal__content big">
+        <button class="modal__close">&times;</button>
+        <h2 class="modal__title">Добавить сотрудника</h2>
+        <form id="new-employee-form">
+          <div class="form-group">
+            <label for="employee-email">Email</label>
+            <input type="email" id="employee-email" required />
+          </div>
+          <div class="form-group">
+            <label for="employee-position">Должность</label>
+            <select id="employee-position" required>
+              <option value="">Выберите должность</option>
+              <option value="manager">Менеджер</option>
+              <option value="specialist">Специалист</option>
+              <option value="part-time">Парт-тайм</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="employee-department">Подразделение</label>
+            <select id="employee-department" required>
+              <option value="">Выберите подразделение</option>
+              <option value="sales">Отдел продаж</option>
+              <option value="support">Служба поддержки</option>
+              <option value="hr">HR</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="employee-role">Роль</label>
+            <select id="employee-role" required>
+              <option value="EMPLOYEE">Сотрудник</option>
+              <option value="MANAGER">Менеджер</option>
+              <option value="admin">Администратор</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="employee-add-payment-type">Тип оплаты</label>
+            <select id="employee-add-payment-type" required>
+              <option selected value="FLAT_RATE">Фиксированная в месяц</option>
+              <option value="HOURLY_RATE">Часовая ставка</option>
+            </select>
+          </div>
+          <div id="monthly-salary-add-group" class="form-group">
+            <label for="employee-add-monthly-salary">Оклад (в месяц)</label>
+            <input
+              type="number"
+              id="employee-add-monthly-salary"
+              min="0"
+              step="0.01"
+            />
+          </div>
+          <div id="hourly-rate-add-group" class="form-group">
+            <label for="employee-add-hourly-rate">Ставка (в час)</label>
+            <input
+              type="number"
+              id="employee-add-hourly-rate"
+              min="0"
+              step="0.01"
+            />
+          </div>
+          <button
+            type="submit"
+            id="submit-add-employee"
+            class="btn btn--primary btn--block"
+          >
+            Добавить
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="employee-edit-modal">
+      <div class="modal__content big">
+        <button class="modal__close">&times;</button>
+        <h2 class="modal__title">Обновить сотрудника</h2>
+        <form id="edit-employee-form">
+          <div class="form-group">
+            <label for="employee-edit-email">Email</label>
+            <input type="email" id="employee-edit-email" disabled required />
+          </div>
+          <div class="form-group">
+            <label for="employee-edit-position">Должность</label>
+            <input id="employee-edit-position" required />
+          </div>
+          <div class="form-group">
+            <label for="employee-edit-department">Подразделение</label>
+            <input id="employee-edit-department" required />
+          </div>
+          <div class="form-group">
+            <label for="employee-edit-role">Роль</label>
+            <select id="employee-edit-role" required>
+              <option value="EMPLOYEE">Сотрудник</option>
+              <option value="MANAGER">Менеджер</option>
+              <option value="admin">Администратор</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="employee-edit-payment-type">Тип оплаты</label>
+            <select id="employee-edit-payment-type" required>
+              <option selected value="FLAT_RATE">Фиксированная в месяц</option>
+              <option value="HOURLY_RATE">Часовая ставка</option>
+            </select>
+          </div>
+          <div id="monthly-salary-group" class="form-group">
+            <label for="employee-edit-monthly-salary">Оклад (в месяц)</label>
+            <input
+              type="number"
+              id="employee-edit-monthly-salary"
+              min="0"
+              step="0.01"
+            />
+          </div>
+          <div id="hourly-rate-group" class="form-group">
+            <label for="employee-edit-hourly-rate">Ставка (в час)</label>
+            <input
+              type="number"
+              id="employee-edit-hourly-rate"
+              min="0"
+              step="0.01"
+            />
+          </div>
+          <button
+            type="submit"
+            id="submit-edit-employee"
+            class="btn btn--primary btn--block"
+          >
+            Обновить
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="employee-delete-modal">
+      <div class="modal__content big">
+        <button class="modal__close">&times;</button>
+        <h2 class="modal__title">Вы уверены, что хотите удалить сотрудника?</h2>
+        <form id="delete-employee-form">
+          <div class="form-group">
+            <label for="employee-delete-email">Email</label>
+            <input type="email" id="employee-delete-email" disabled required />
+          </div>
+          <button
+            type="submit"
+            id="submit-delete-employee"
+            class="btn btn--primary btn--block"
+          >
+            Удалить
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer__inner">
+          <div class="footer__col">
+            <a href="/index.html" class="logo">JetTraker</a>
+            <p class="footer__text">
+              Удобное решение для учета рабочего времени и управления персоналом
+            </p>
+          </div>
+          <div class="footer__col">
+            <h4 class="footer__title">Навигация</h4>
+            <ul class="footer__links">
+              <li><a href="/index.html">Главная</a></li>
+              <li><a href="/schedule.html">График работы</a></li>
+              <li><a href="/salary.html">Зарплата</a></li>
+              <li><a href="/dashboard">Личный кабинет</a></li>
+            </ul>
+          </div>
+          <div class="footer__col">
+            <h4 class="footer__title">Контакты</h4>
+            <ul class="footer__links">
+              <li>
+                <a href="mailto:support@jettraker.com">support@jettraker.com</a>
+              </li>
+              <li><a href="tel:+78001234567">8 (800) 123-45-67</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer__bottom">
+          <p class="footer__copyright">© 2025 JetTraker. Все права защищены.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="../js/common.js"></script>
+    <script src="../js/admin.js"></script>
+  </body>
+</html>

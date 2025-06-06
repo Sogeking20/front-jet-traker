@@ -1,0 +1,76 @@
+.onboarding-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.onboarding-progress {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.progress-step {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-weight: bold;
+}
+
+.progress-step.active {
+    background: #4361ee;
+    color: white;
+}
+
+.onboarding-content {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.onboarding-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.3s ease;
+    padding: 1rem;
+}
+
+.onboarding-slide.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.onboarding-slide img {
+    max-width: 300px;
+    margin: 0 auto 2rem;
+}
+
+.onboarding-slide h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.onboarding-slide p {
+    color: #64748b;
+    margin-bottom: 2rem;
+}
+
+.onboarding-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}

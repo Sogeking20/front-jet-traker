@@ -1,0 +1,86 @@
+.time-clock-main {
+    padding: 2rem 0;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.time-clock-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.current-time {
+    font-size: 1.5rem;
+    color: #64748b;
+    margin-top: 0.5rem;
+}
+
+.time-clock-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+}
+
+.employee-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.employee-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.employee-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.clock-status {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.status-indicator {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #4361ee;
+    margin-bottom: 0.5rem;
+}
+
+.current-shift {
+    color: #64748b;
+}
+
+.clock-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.break-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JetTraker - Авторизация</title>
+    <link rel="stylesheet" href="css/auth.css" />
+  </head>
+  <body>
+    <main class="auth-main">
+      <div class="container">
+        <div class="auth-container">
+          <div class="auth-tabs">
+            <button class="auth-tab active" data-tab="login">Вход</button>
+            <button class="auth-tab" data-tab="register">Регистрация</button>
+          </div>
+
+          <form id="login-form" class="auth-form active">
+            <h2 class="auth-form__title">Вход в аккаунт</h2>
+            <div class="form-group">
+              <label for="login-email">Email</label>
+              <input type="email" id="login-email" required />
+            </div>
+            <div class="form-group">
+              <label for="login-password">Пароль</label>
+              <input type="password" id="login-password" required />
+            </div>
+            <div class="form-group form-group--row">
+              <input type="checkbox" id="login-remember" />
+              <label for="login-remember">Запомнить меня</label>
+            </div>
+            <button type="submit" class="btn btn--primary btn--block">
+              Войти
+            </button>
+            <div class="auth-form__footer">
+              <a href="#" class="auth-form__link">Забыли пароль?</a>
+            </div>
+          </form>
+
+          <form id="register-form" class="auth-form">
+            <h2 class="auth-form__title">Создать аккаунт</h2>
+            <div class="form-group">
+              <label for="register-name">Имя</label>
+              <input type="text" id="register-name" required />
+            </div>
+            <div class="form-group">
+              <label for="register-surname">Фамилия</label>
+              <input type="text" id="register-surname" required />
+            </div>
+            <div class="form-group">
+              <label for="register-email">Email</label>
+              <input type="email" id="register-email" required />
+            </div>
+            <div class="form-group">
+              <label for="register-password">Пароль</label>
+              <input type="password" id="register-password" required />
+            </div>
+            <div class="form-group">
+              <label for="register-confirm-password">Подтвердите пароль</label>
+              <input type="password" id="register-confirm-password" required />
+            </div>
+            <div class="form-group form-group--row">
+              <input type="checkbox" id="register-terms" required />
+              <label for="register-terms"
+                >Я согласен с <a href="#">условиями использования</a></label
+              >
+            </div>
+            <button type="submit" class="btn btn--primary btn--block">
+              Зарегистрироваться
+            </button>
+          </form>
+
+          <div id="register-company-form" class="auth-form">
+            <h2 class="auth-form__title">Создание компании</h2>
+            <div class="form-group">
+              <label for="company-name">Название компании</label>
+              <input type="text" id="company-name" required />
+            </div>
+            <div class="form-group">
+              <label for="company-industry">Отрасль</label>
+              <input type="text" id="company-industry" required />
+            </div>
+            <button
+              id="create-company-btn"
+              class="btn mb-1 btn--primary btn--block"
+            >
+              Создать компанию
+            </button>
+            <button id="create-company-btn" class="btn btn--block">
+              Я работник
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="js/auth.js"></script>
+  </body>
+</html>

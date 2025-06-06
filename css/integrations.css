@@ -1,0 +1,120 @@
+/* integrations.css */
+.integrations-main {
+    padding: 2rem 0;
+}
+
+.integrations-header {
+    margin-bottom: 2rem;
+}
+
+.integrations-title {
+    font-size: 1.75rem;
+    color: #1e293b;
+    margin: 0 0 0.5rem;
+}
+
+.integrations-subtitle {
+    color: #64748b;
+    margin: 0;
+}
+
+.integrations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.integration-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s;
+}
+
+.integration-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.integration-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.integration-logo img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+}
+
+.integration-info {
+    flex: 1;
+    margin-bottom: 1.5rem;
+}
+
+.integration-name {
+    font-size: 1.125rem;
+    color: #1e293b;
+    margin: 0 0 0.5rem;
+}
+
+.integration-description {
+    color: #64748b;
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.integration-connect {
+    align-self: flex-start;
+}
+
+.integration-disconnect {
+    align-self: flex-start;
+}
+
+.integrations-api {
+    background: #fff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.api-docs {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.api-docs p {
+    margin: 0;
+    color: #64748b;
+    max-width: 70%;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .integrations-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .api-docs {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .api-docs p {
+        max-width: 100%;
+    }
+}

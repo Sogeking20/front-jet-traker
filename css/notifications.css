@@ -1,0 +1,141 @@
+/* notifications.css */
+.notifications-main {
+    padding: 2rem 0;
+}
+
+.notifications-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.notifications-title {
+    font-size: 1.75rem;
+    color: #1e293b;
+    margin: 0;
+}
+
+.notifications-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.notifications-tabs {
+    display: flex;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 1.5rem;
+}
+
+.notifications-tab {
+    background: none;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    color: #64748b;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+}
+
+.notifications-tab.active {
+    color: #4361ee;
+}
+
+.notifications-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #4361ee;
+}
+
+.notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 1rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s;
+}
+
+.notification-item.unread {
+    background: #f8fafc;
+    border-left: 3px solid #4361ee;
+}
+
+.notification-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.notification-icon {
+    padding: 0.5rem;
+    margin-right: 1rem;
+    background: #e0e7ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    font-size: 0.9375rem;
+    color: #1e293b;
+    margin: 0 0 0.25rem;
+}
+
+.notification-text {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0 0 0.25rem;
+}
+
+.notification-time {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.notification-action {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+.notification-action:hover {
+    color: #64748b;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .notifications-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .notifications-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .notifications-tabs {
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+}

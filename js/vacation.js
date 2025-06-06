@@ -1,0 +1,348 @@
+document.addEventListener("DOMContentLoaded", function () {
+  const config = {
+    vacation: [],
+  };
+
+  initApplication();
+
+  function initApplication() {
+    checkRole();
+    loadVacations();
+    loadEmployees();
+    // rendervacationTable();
+    // initFilters();
+  }
+
+  const editVacationForm = document.getElementById("edit-vacation-form");
+  if (editVacationForm) {
+    editVacationForm.addEventListener("submit", editFormSubmit);
+  }
+
+  const addVacationForm = document.getElementById("add-vacation-form");
+  if (addVacationForm) {
+    addVacationForm.addEventListener("submit", addFormSubmit);
+  }
+
+  async function loadEmployees() {
+    const token = localStorage.getItem("accessToken");
+
+    fetch("http://localhost:3000/api/employee", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Ошибка авторизации или запроса");
+        }
+        return res.json();
+      })
+      .then((employees) => {
+        const select = document.getElementById("employee-position");
+
+        if (!select) return;
+
+        select.innerHTML = `<option value="">Выберите имя</option>`;
+
+        employees.forEach((employee) => {
+          const option = document.createElement("option");
+          option.value = employee.email;
+          option.textContent = employee.name;
+          select.appendChild(option);
+        });
+      })
+      .catch((error) => {
+        console.error("Ошибка при загрузке сотрудников:", error);
+      });
+  }
+  async function checkRole() {
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      const response = await fetch("http://localhost:3000/api/user/profile", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const userData = await response.json();
+      if (userData.user.role !== "MANAGER" && userData.user.role !== "BOSS") {
+        window.location.href = "/dashboard";
+      }
+    } catch (e) {
+      window.location.href = "/dashboard";
+    }
+  }
+
+  async function loadVacations() {
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      const response = await fetch("http://localhost:3000/api/vacation", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const savedVacations = await response.json();
+      console.log(savedVacations);
+      if (savedVacations) {
+        config.vacation = savedVacations;
+      }
+
+      renderVacation();
+    } catch (e) {
+      console.error("Error loading vacations:", e);
+    }
+  }
+
+  function renderVacation(vacation = config.vacation) {
+    const tableBody = document.querySelector("#vacation-list");
+    if (!tableBody) return;
+    console.log("1", vacation);
+
+    tableBody.innerHTML = "";
+
+    if (vacation.length === 0) {
+      const emptyRow = document.createElement("div");
+      emptyRow.innerHTML = `<p class="text-center">Заявки не найдены</p>`;
+      tableBody.appendChild(emptyRow);
+      return;
+    }
+
+    vacation.forEach((vacation) => {
+      const type = vacation.type === "PAID" ? "Оплачиваемый" : "Неоплачиваемый";
+
+      const status =
+        vacation.status === "APPROVED"
+          ? "Одобрено"
+          : vacation.status === "REJECTED"
+          ? "Отклонено"
+          : "На усмотрении";
+
+      const fromDate = new Date(vacation.fromDate);
+      const toDate = new Date(vacation.toDate);
+
+      tableBody.insertAdjacentHTML(
+        "beforeend",
+        `
+                      <tr>
+                <td>${vacation.user.name}</td>
+                <td>${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}</td>
+                <td>14</td>
+                <td>${type}</td>
+                <td><span class="status-badge approved">${status}</span></td>
+                <td>
+                  <button id="edit-vacation" data-id="${
+                    vacation.id
+                  }" class="btn btn--sm btn--outline">Изменить</button>
+                </td>
+              </tr>
+            `
+      );
+    });
+    // Добавляем обработчики для кнопок редактирования
+    document.querySelectorAll("#edit-vacation").forEach((btn) => {
+      btn.addEventListener("click", handleEditVacation);
+    });
+  }
+
+  function handleEditVacation(e) {
+    const vacationId = parseInt(e.currentTarget.dataset.id);
+    const vacation = config.vacation.find((emp) => emp.id === vacationId);
+
+    if (!vacation) {
+      showNotification("Сотрудник не найден", "error");
+      return;
+    }
+
+    console.log(vacation.fromDate);
+    // Заполняем форму данными сотрудника
+    document.getElementById("edit-vacation-name").value = vacation.user.name;
+    document.getElementById("edit-vacation-type").value = vacation.type;
+    document.getElementById("edit-vacation-status").value = vacation.status;
+    flatpickr("#edit-shift-date", {
+      mode: "range",
+      dateFormat: "Y-m-d",
+      defaultDate: [vacation.fromDate, vacation.toDate],
+      locale: {
+        rangeSeparator: " до ",
+        firstDayOfWeek: 1,
+        weekdays: {
+          shorthand: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
+          longhand: [
+            "Воскресенье",
+            "Понедельник",
+            "Вторник",
+            "Среда",
+            "Четверг",
+            "Пятница",
+            "Суббота",
+          ],
+        },
+        months: {
+          shorthand: [
+            "Янв",
+            "Фев",
+            "Мар",
+            "Апр",
+            "Май",
+            "Июн",
+            "Июл",
+            "Авг",
+            "Сен",
+            "Окт",
+            "Ноя",
+            "Дек",
+          ],
+          longhand: [
+            "Январь",
+            "Февраль",
+            "Март",
+            "Апрель",
+            "Май",
+            "Июнь",
+            "Июль",
+            "Август",
+            "Сентябрь",
+            "Октябрь",
+            "Ноябрь",
+            "Декабрь",
+          ],
+        },
+      },
+    });
+    // Обновляем форму для редактирования
+    const form = document.getElementById("edit-vacation-form");
+    form.dataset.editId = vacationId;
+
+    openModal("edit-vacation-modal");
+  }
+
+  async function addFormSubmit(e) {
+    e.preventDefault();
+
+    const form = e.target;
+
+    const range = form["shift-date"].value; // "2025-05-13 до 2025-05-21"
+    let [fromDate, toDate] = "";
+
+    if (range && range.includes(" до ")) {
+      [fromDate, toDate] = range.split(" до ");
+    }
+
+    const employee = {
+      email: form["employee-position"].value,
+      fromDate: fromDate,
+      toDate: toDate,
+      type: form["vacation-type"].value,
+      status: form["vacation-status"].value,
+    };
+
+    console.log(JSON.stringify(employee));
+
+    const token = localStorage.getItem("accessToken");
+
+    const response = await fetch(`http://localhost:3000/api/vacation`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(employee),
+    });
+
+    if (!response.ok) {
+      throw new Error(response.message || "Ошибка регистрации");
+    }
+
+    vacation = await response.json();
+
+    // showNotification("Сотрудник успешно добавлен!", "success");
+    config.vacation.push(vacation);
+    renderVacation();
+    closeModal("add-vacation-modal");
+  }
+
+  async function editFormSubmit(e) {
+    e.preventDefault();
+
+    const form = e.target;
+
+    const range = form["edit-shift-date"].value; // "2025-05-13 до 2025-05-21"
+    let [fromDate, toDate] = "";
+
+    if (range && range.includes(" до ")) {
+      [fromDate, toDate] = range.split(" до ");
+      console.log(fromDate, toDate);
+    }
+
+    const employee = {
+      fromDate: fromDate,
+      toDate: toDate,
+      type: form["edit-vacation-type"].value,
+      status: form["edit-vacation-status"].value,
+    };
+
+    console.log(JSON.stringify(employee));
+
+    const token = localStorage.getItem("accessToken");
+
+    const id = parseInt(form.dataset.editId);
+
+    const response = await fetch(`http://localhost:3000/api/vacation/${id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(employee),
+    });
+
+    if (!response.ok) {
+      throw new Error(response.message || "Ошибка регистрации");
+    }
+
+    vacation = await response.json();
+
+    const index = config.vacation.findIndex((emp) => emp.id === vacation.id);
+
+    if (index !== -1) {
+      config.vacation[index] = vacation;
+    }
+
+    // showNotification("Сотрудник успешно добавлен!", "success");
+    renderVacation();
+    closeModal("edit-vacation-modal");
+  }
+
+  const addVacationBtn = document.getElementById("add-vacation-btn");
+  if (addVacationBtn) {
+    addVacationBtn.addEventListener("click", function () {
+      openModal("add-vacation-modal");
+    });
+  }
+
+  function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.style.display = "block";
+      modal.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+  }
+
+  function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.style.display = "none";
+      document.body.style.overflow = "";
+    }
+  }
+});
