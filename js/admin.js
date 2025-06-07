@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://localhost:3000/api/user/profile", {
+      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
     params.append("post", employeeValue);
   }
 
-      const response = await fetch(`http://localhost:3000/api/employee?${params.toString()}`, {
+      const response = await fetch(`http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/employee?${params.toString()}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -322,7 +322,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const token = localStorage.getItem("accessToken");
 
-    const response = await fetch("http://localhost:3000/api/employee", {
+    const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/employee", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -375,7 +375,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const token = localStorage.getItem("accessToken");
 
-    const response = await fetch("http://localhost:3000/api/employee", {
+    const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/employee", {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -424,7 +424,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const token = localStorage.getItem("accessToken");
 
-    const response = await fetch("http://localhost:3000/api/employee", {
+    const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/employee", {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,

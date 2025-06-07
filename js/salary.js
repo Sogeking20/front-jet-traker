@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Конфигурация модуля
   const config = {
-    apiBaseUrl: "http://localhost:3000/api",
+    apiBaseUrl: "http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api",
     pdfGeneratorUrl: "https://pdfgen.yourdomain.com",
     defaultPeriod: "current-month",
     notificationDuration: 5000,
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://localhost:3000/api/user/profile", {
+      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

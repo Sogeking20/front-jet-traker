@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
   async function loadCompany() {
     const token = localStorage.getItem("accessToken");
 
-    fetch("http://localhost:3000/api/company", {
+    fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/company", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://localhost:3000/api/user/profile", {
+      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -79,14 +79,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const employee = {
       name: form["company-name"].value,
       industry: form["company-industry"].value,
-      timeZone: form["company-timezone"].value,
     };
 
     console.log(JSON.stringify(employee));
 
     const token = localStorage.getItem("accessToken");
 
-    const response = await fetch(`http://localhost:3000/api/company`, {
+    const response = await fetch(`http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/company`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -98,8 +97,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!response.ok) {
       throw new Error(response.message || "Ошибка регистрации");
+      showNotification("Произошла ошибка!", "error");
     }
 
+    showNotification("Вы успешно изменили данные!", "success");
+
     company = await response.json();
+  }
+
+          function showNotification(message, type, container = document.body) {
+    const toast = document.createElement("div");
+    toast.className = type === "success" ? "success-toast" : "error-toast";
+    toast.innerText = message;
+
+    document.body.appendChild(toast);
+
+    // Удалить плашку через 3 секунды
+    setTimeout(() => {
+      toast.remove();
+    }, 3000);
   }
 });

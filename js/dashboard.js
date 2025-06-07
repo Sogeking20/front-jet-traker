@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://localhost:3000/api/user/profile", {
+      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const token = localStorage.getItem("accessToken");
 
-    const response = await fetch("http://localhost:3000/api/company", {
+    const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/company", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const token = localStorage.getItem("accessToken");
 
-    const response = await fetch("http://localhost:3000/api/request", {
+    const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/request", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -129,9 +129,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!response.ok) {
       throw new Error(response.message || "Ошибка регистрации");
+      showNotification("Не удалось отправить заявку!", "error");
     }
 
-    // showNotification("Сотрудник успешно добавлен!", "success");
+    showNotification("Заявка отправлена!", "success");
     closeModal("request-modal");
     form.reset();
   }
@@ -141,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const token = localStorage.getItem("accessToken");
 
       const response = await fetch(
-        "http://localhost:3000/api/user/profile/full",
+        "http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile/full",
         {
           method: "GET",
           headers: {
@@ -320,6 +321,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 `
       );
     });
+  }
+
+      function showNotification(message, type, container = document.body) {
+    const toast = document.createElement("div");
+    toast.className = type === "success" ? "success-toast" : "error-toast";
+    toast.innerText = message;
+
+    document.body.appendChild(toast);
+
+    // Удалить плашку через 3 секунды
+    setTimeout(() => {
+      toast.remove();
+    }, 3000);
   }
 
   function openModal(id) {

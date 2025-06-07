@@ -191,39 +191,6 @@
 
     <main class="vacation-main">
       <div class="container">
-        <div class="vacation-header">
-          <h1 class="vacation-title">Управление отпусками</h1>
-          <button class="btn btn--primary" id="add-vacation-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M12 5V19M5 12H19"
-                stroke="currentColor"
-                stroke-width="2"
-              />
-            </svg>
-            Добавить отпуск
-          </button>
-        </div>
-
-        <div class="vacation-balance">
-          <div class="balance-card">
-            <h3>Доступно дней</h3>
-            <div class="balance-value">28</div>
-          </div>
-          <div class="balance-card">
-            <h3>Использовано</h3>
-            <div class="balance-value">14</div>
-          </div>
-          <div class="balance-card">
-            <h3>Остаток</h3>
-            <div class="balance-value">14</div>
-          </div>
-        </div>
-
-        <div class="vacation-calendar">
-          <div id="vacation-calendar-view"></div>
-        </div>
-
         <div class="vacation-requests">
           <h2 class="section-title">Запланированные отпуска</h2>
           <table class="vacation-table">
@@ -295,7 +262,7 @@
               <option value="hr">Отклонен</option>
             </select>
           </div>
-          <button type="submit" class="btn btn--primary btn--block">
+          <button type="submit" id="add-vacation-btn-submit" class="btn btn--primary btn--block">
             Добавить
           </button>
         </form>
@@ -337,7 +304,7 @@
               <option value="REJECTED">Отклонен</option>
             </select>
           </div>
-          <button type="submit" class="btn btn--primary btn--block">
+          <button type="submit" id="submit-edit-vacation" class="btn btn--primary btn--block">
             Обновить
           </button>
         </form>

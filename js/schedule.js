@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://localhost:3000/api/user/profile", {
+      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
     const response = await fetch(
-      `http://localhost:3000/api/shift?${params.toString()}`,
+      `http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/shift?${params.toString()}`,
       {
         method: "GET",
         headers: {
@@ -320,7 +320,7 @@ async function loadEmployees() {
   const token = localStorage.getItem("accessToken");
 
   try {
-    const res = await fetch("http://localhost:3000/api/employee", {
+    const res = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/employee", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -434,7 +434,7 @@ document.getElementById("shift-employee").addEventListener("change", (e) => {
 
       try {
         const token = localStorage.getItem("accessToken");
-        const response = await fetch("http://localhost:3000/api/shift", {
+        const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/shift", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

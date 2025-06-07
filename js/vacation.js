@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
   async function loadEmployees() {
     const token = localStorage.getItem("accessToken");
 
-    fetch("http://localhost:3000/api/employee", {
+    fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/employee", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://localhost:3000/api/user/profile", {
+      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://localhost:3000/api/vacation", {
+      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/vacation", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (vacation.length === 0) {
       const emptyRow = document.createElement("div");
-      emptyRow.innerHTML = `<p class="text-center">Заявки не найдены</p>`;
+      emptyRow.innerHTML = `<p class="text-center">Отпуски не найдены</p>`;
       tableBody.appendChild(emptyRow);
       return;
     }
@@ -158,6 +158,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  const submitEditButton = document.getElementById("submit-edit-vacation");
+  const submitAddButton = document.getElementById("add-vacation-btn-submit");
+
   function handleEditVacation(e) {
     const vacationId = parseInt(e.currentTarget.dataset.id);
     const vacation = config.vacation.find((emp) => emp.id === vacationId);
@@ -167,7 +170,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    console.log(vacation.fromDate);
     // Заполняем форму данными сотрудника
     document.getElementById("edit-vacation-name").value = vacation.user.name;
     document.getElementById("edit-vacation-type").value = vacation.type;
@@ -233,6 +235,9 @@ document.addEventListener("DOMContentLoaded", function () {
   async function addFormSubmit(e) {
     e.preventDefault();
 
+    submitAddButton.disabled = true;
+    submitAddButton.textContent = "Сохраняем...";
+
     const form = e.target;
 
     const range = form["shift-date"].value; // "2025-05-13 до 2025-05-21"
@@ -254,7 +259,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const token = localStorage.getItem("accessToken");
 
-    const response = await fetch(`http://localhost:3000/api/vacation`, {
+    const response = await fetch(`http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/vacation`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -264,13 +269,17 @@ document.addEventListener("DOMContentLoaded", function () {
       body: JSON.stringify(employee),
     });
 
+    submitAddButton.disabled = false;
+    submitAddButton.textContent = "Добавить";
+
     if (!response.ok) {
       throw new Error(response.message || "Ошибка регистрации");
+      showNotification("Не удалось добавить!", "error");
     }
 
     vacation = await response.json();
 
-    // showNotification("Сотрудник успешно добавлен!", "success");
+    showNotification("Отпуск успешно добавлен!", "success");
     config.vacation.push(vacation);
     renderVacation();
     closeModal("add-vacation-modal");
@@ -278,6 +287,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function editFormSubmit(e) {
     e.preventDefault();
+
+    submitEditButton.disabled = true;
+    submitEditButton.textContent = "Сохраняем...";
 
     const form = e.target;
 
@@ -302,7 +314,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const id = parseInt(form.dataset.editId);
 
-    const response = await fetch(`http://localhost:3000/api/vacation/${id}`, {
+    const response = await fetch(`http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/vacation/${id}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -312,8 +324,12 @@ document.addEventListener("DOMContentLoaded", function () {
       body: JSON.stringify(employee),
     });
 
+    submitEditButton.disabled = false;
+    submitEditButton.textContent = "Обновить";
+
     if (!response.ok) {
       throw new Error(response.message || "Ошибка регистрации");
+      showNotification("Не удалось обновить сотрудника!", "error");
     }
 
     vacation = await response.json();
@@ -324,7 +340,7 @@ document.addEventListener("DOMContentLoaded", function () {
       config.vacation[index] = vacation;
     }
 
-    // showNotification("Сотрудник успешно добавлен!", "success");
+    showNotification("Успешно обновлено!", "success");
     renderVacation();
     closeModal("edit-vacation-modal");
   }
@@ -334,6 +350,19 @@ document.addEventListener("DOMContentLoaded", function () {
     addVacationBtn.addEventListener("click", function () {
       openModal("add-vacation-modal");
     });
+  }
+
+      function showNotification(message, type, container = document.body) {
+    const toast = document.createElement("div");
+    toast.className = type === "success" ? "success-toast" : "error-toast";
+    toast.innerText = message;
+
+    document.body.appendChild(toast);
+
+    // Удалить плашку через 3 секунды
+    setTimeout(() => {
+      toast.remove();
+    }, 3000);
   }
 
   function openModal(modalId) {

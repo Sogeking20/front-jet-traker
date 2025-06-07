@@ -284,7 +284,7 @@
 
       console.log(token);
 
-      const response = await fetch("http://localhost:3000/api/user/profile", {
+      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -442,7 +442,7 @@
 
   async function logout() {
     try {
-      await fetch("http://localhost:3000/api/auth/logout", {
+      await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/auth/logout", {
         method: "POST",
         credentials: "include", // важно для передачи cookie
       });
