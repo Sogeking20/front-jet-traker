@@ -68,6 +68,7 @@
     DOM.logoButton = document.querySelectorAll(".logo");
     DOM.userMenus = document.querySelectorAll(".user-menu");
     DOM.userName = document.querySelectorAll(".user-menu__name");
+    DOM.addShiftButtons = document.querySelectorAll("#add-shift-btn");
     DOM.adminLinks = document.querySelectorAll(
       "#admin-link, #admin-sidebar-link"
     );
@@ -76,6 +77,9 @@
     );
     DOM.adminNotificationsLinks = document.querySelectorAll(
       "#admin-link, #admin-sidebar-link, #admin-notifications"
+    );
+    DOM.createCompanyButtons = document.querySelectorAll(
+      "#create-company-btn"
     );
     DOM.userNav = document.querySelectorAll(".user-menu__name");
     DOM.teamLinks = document.querySelectorAll("#team-link");
@@ -339,11 +343,28 @@
         (n) => n.companyId === userData.user.companyId
       );
       // const isAdmin = config.adminRoles.includes(userRole);
-      const isAdmin = userRole === "MANAGER" || "BOSS" ? true : false;
+      const isAdmin = userRole === "MANAGER" || userRole === "BOSS" ? true : false;
+      const isBoss = userRole === "BOSS" ? true : false;
+      const hasCompany = userData.user.companyId !== null ? true : false;
 
       DOM.adminLinks.forEach((link) => {
         link.style.display = isAdmin ? "inline" : "none";
         link.classList.toggle("hidden", !isAdmin);
+      });
+
+            DOM.addShiftButtons.forEach((link) => {
+        link.style.display = isAdmin ? "inline" : "none";
+        link.classList.toggle("hidden", !isAdmin);
+      });
+
+      DOM.createRequestButtons.forEach((link) => {
+        link.style.display = isBoss || !hasCompany ? "none" : "inline";
+        link.classList.toggle("hidden", isBoss || !hasCompany);
+      });
+
+      DOM.createCompanyButtons.forEach((link) => {
+        link.style.display = hasCompany ? "none" : "inline";
+        link.classList.toggle("hidden", hasCompany);
       });
 
       DOM.adminNotificationsLinks.forEach((link) => {

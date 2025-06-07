@@ -9,7 +9,32 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   // Инициализация приложения
+  init();
   initAuth();
+
+   function init() {
+    checkRole();
+  }
+
+      async function checkRole() {
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      const response = await fetch("http://localhost:3000/api/user/profile", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log(response)
+      if (response.ok) {
+          window.location.href = "/dashboard";
+      }
+    } catch (e) {
+          window.location.href = "/";
+    }
+  }
 
   // Переключение между вкладками входа и регистрации
   const authTabs = document.querySelectorAll(".auth-tab");

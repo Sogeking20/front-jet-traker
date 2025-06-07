@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const config = {
     schedules: [],
+    employees: [],
   };
 
   initApplication();
@@ -25,8 +26,34 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function initApplication() {
+    checkRole();
     generateHeaderRow();
     loadSchedule();
+  }
+
+      async function checkRole() {
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      const response = await fetch("http://localhost:3000/api/user/profile", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log(response)
+
+      if (!response.ok) {
+        if (window.location.pathname !== "/") {
+          window.location.href = "/";
+        }
+      }
+    } catch (e) {
+      if (window.location.pathname !== "/") {
+        window.location.href = "/";
+      }
+    }
   }
 
   function generateHeaderRow() {
@@ -79,18 +106,46 @@ document.addEventListener("DOMContentLoaded", function () {
       options
     );
 
+    // fetchSchedule(currentDate.getMonth() + 1, currentDate.getFullYear());
+
     // Здесь должна быть логика обновления графика смен
     // Для демонстрации просто обновляем дату
+  }
+
+    async function updateTable() {
+      const data = await fetchSchedule(currentDate.getMonth() + 1, currentDate.getFullYear());
+      console.log(data);
+      renderScheduleTable();
   }
 
   prevMonthBtn.addEventListener("click", function () {
     currentDate.setMonth(currentDate.getMonth() - 1);
     updateCalendar();
+    updateTable()
   });
 
   nextMonthBtn.addEventListener("click", function () {
     currentDate.setMonth(currentDate.getMonth() + 1);
     updateCalendar();
+    updateTable()
+  });
+
+  document.getElementById("department-filter").addEventListener("change", async () => {
+    const data = await fetchSchedule(currentDate.getMonth() + 1, currentDate.getFullYear());
+    console.log(data);
+      renderScheduleTable();
+  });
+
+  document.getElementById("employee-filter").addEventListener("change", async () => {
+    const data = await fetchSchedule(currentDate.getMonth() + 1, currentDate.getFullYear());
+    console.log(data);
+      renderScheduleTable();
+  });
+
+  document.getElementById("shift-type-filter").addEventListener("change", async () => {
+    const data = await fetchSchedule(currentDate.getMonth() + 1, currentDate.getFullYear());
+    console.log(data);
+      renderScheduleTable();
   });
 
   function getQueryParam(name) {
@@ -99,11 +154,54 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   async function fetchSchedule(month, year) {
-    const params = new URLSearchParams();
-    if (month) params.append("month", month);
-    if (year) params.append("year", year);
+    console.log(month, year);
+
+    const grid = document.querySelector(".schedule-grid")
+    generateHeaderRow();
+    const row = document.createElement("div");
+    row.innerHTML= 'Загрузка...';
+    grid.appendChild(row);
 
     const token = localStorage.getItem("accessToken");
+
+      const departmentValue = document.getElementById("department-filter").value;
+  const employeeValue = document.getElementById("employee-filter").value;
+  const shiftTypeValue = document.getElementById("shift-type-filter").value;
+
+  // Собираем query параметры
+  const params = new URLSearchParams();
+
+  if (month && year) {
+    params.append("month", month);
+    params.append("year", year);
+  }
+
+  if (departmentValue !== "all") {
+    params.append("subunit", departmentValue); // отправляется как ?subunit=sales
+  }
+
+  if (employeeValue === "me") {
+    params.append("onlyMine", "true");
+  }
+
+  if (shiftTypeValue !== "all") {
+    let type = "";
+    switch (shiftTypeValue) {
+      case "day":
+        type = "DAY";
+        break;
+      case "night":
+        type = "NIGHT";
+        break;
+      case "full-day":
+        type = "DAILY";
+        break;
+      case "part-time":
+        type = "PART_TIME";
+        break;
+    }
+    params.append("type", type);
+  }
 
     const response = await fetch(
       `http://localhost:3000/api/shift?${params.toString()}`,
@@ -127,14 +225,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   async function loadSchedule() {
-    const month = getQueryParam("month");
-    const year = getQueryParam("year");
-    // const container = document.getElementById("scheduleContainer");
-
-    // container.innerHTML = "Загрузка...";
-
     try {
-      const data = await fetchSchedule(month, year);
+      const data = await fetchSchedule();
       console.log(data);
       renderScheduleTable();
     } catch (err) {
@@ -222,62 +314,55 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Инициализация фильтров
-  const departmentFilter = document.getElementById("department-filter");
-  const employeeFilter = document.getElementById("employee-filter");
-  const shiftTypeFilter = document.getElementById("shift-type-filter");
 
-  [departmentFilter, employeeFilter, shiftTypeFilter].forEach((filter) => {
-    filter.addEventListener("change", function () {
-      // Здесь должна быть логика фильтрации графика
-      console.log("Фильтры изменены:", {
-        department: departmentFilter.value,
-        employee: employeeFilter.value,
-        shiftType: shiftTypeFilter.value,
-      });
-    });
-  });
 
-  // Проверка роли пользователя для отображения кнопки добавления смены
-  const userRole = localStorage.getItem("jettraker_role");
-  if (userRole === "admin" || userRole === "manager") {
-    document.getElementById("add-shift-btn").style.display = "block";
-  }
+async function loadEmployees() {
+  const token = localStorage.getItem("accessToken");
 
-  async function loadEmployees() {
-    const token = localStorage.getItem("accessToken");
-
-    fetch("http://localhost:3000/api/employee", {
+  try {
+    const res = await fetch("http://localhost:3000/api/employee", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Ошибка авторизации или запроса");
-        }
-        return res.json();
-      })
-      .then((employees) => {
-        const select = document.getElementById("shift-employee");
+    });
 
-        if (!select) return;
+    if (!res.ok) {
+      throw new Error("Ошибка авторизации или запроса");
+    }
 
-        select.innerHTML = `<option value="">Выберите имя</option>`;
+    const employees = await res.json();
+    config.employees = employees; // Сохраняем глобально
 
-        employees.forEach((employee) => {
-          const option = document.createElement("option");
-          option.value = employee.email;
-          option.textContent = employee.name;
-          select.appendChild(option);
-        });
-      })
-      .catch((error) => {
-        console.error("Ошибка при загрузке сотрудников:", error);
-      });
+    const select = document.getElementById("shift-employee");
+    if (!select) return;
+
+    select.innerHTML = `<option value="">Выберите имя</option>`;
+
+    employees.forEach((employee) => {
+      const option = document.createElement("option");
+      option.value = employee.email; // ключ для идентификации
+      option.textContent = employee.name;
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Ошибка при загрузке сотрудников:", error);
   }
+}
+
+document.getElementById("shift-employee").addEventListener("change", (e) => {
+  const selectedEmail = e.target.value;
+  const selectedEmployee = config.employees.find(emp => emp.email === selectedEmail);
+
+  const rateGroup = document.getElementById("hourly-rate-group");
+
+  if (selectedEmployee && selectedEmployee.paymentType === "HOURLY_RATE") {
+    rateGroup.style.display = "block";
+  } else {
+    rateGroup.style.display = "none";
+  }
+});
 
   // Обработка формы добавления смены
   const shiftForm = document.getElementById("new-shift-form");
@@ -311,6 +396,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const startTime = startInput.value;
       let endTime = endInput.value;
       const type = typeSelect.value;
+      const hourlyRate = Number(shiftForm["hourly-rate"].value);
 
       if (
         !email ||
@@ -341,7 +427,10 @@ document.addEventListener("DOMContentLoaded", function () {
         startTime: start.toISOString(),
         endTime: end.toISOString(),
         type,
+        hourlyRate 
       };
+
+      console.log(payload);
 
       try {
         const token = localStorage.getItem("accessToken");
@@ -362,13 +451,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // document.getElementById("result").textContent =
         //   "Смена успешно добавлена!";
+        showNotification("Смена успешно добавлена!", "success");
+
         shiftForm.reset();
         endInput.disabled = false; // вернуть обратно для следующих смен
         const user = config.schedules.find((u) => u.id === result.userId);
-        console.log(user);
-        console.log(user.schedules);
         user.schedules.push(result);
-        console.log(result);
         renderScheduleTable();
         closeModal("shift-modal");
       } catch (err) {
@@ -405,6 +493,19 @@ document.addEventListener("DOMContentLoaded", function () {
       modal.style.display = "none";
       document.body.style.overflow = "";
     }
+  }
+
+    function showNotification(message, type, container = document.body) {
+    const toast = document.createElement("div");
+    toast.className = type === "success" ? "success-toast" : "error-toast";
+    toast.innerText = message;
+
+    document.body.appendChild(toast);
+
+    // Удалить плашку через 3 секунды
+    setTimeout(() => {
+      toast.remove();
+    }, 3000);
   }
 
   // Инициализация календаря

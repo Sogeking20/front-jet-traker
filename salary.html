@@ -188,14 +188,14 @@
       <div class="container">
         <div class="salary-header">
           <h1 class="salary-title">Зарплата</h1>
-          <div class="salary-period">
-            <select id="salary-period-select">
-              <option value="current">Текущий месяц</option>
-              <option value="prev">Предыдущий месяц</option>
-              <option value="april">Апрель 2023</option>
-              <option value="march">Март 2023</option>
-              <option value="february">Февраль 2023</option>
-            </select>
+          <div class="salary-actions">
+            <button class="btn btn--outline" id="prev-month-btn">
+              &lt; Пред. месяц
+            </button>
+            <h2 id="current-month" class="schedule-month">Май 2023</h2>
+            <button class="btn btn--outline" id="next-month-btn">
+              След. месяц &gt;
+            </button>
           </div>
         </div>
 
@@ -348,7 +348,7 @@
           </table>
         </div>
 
-        <div class="salary-payslip">
+        <!-- <div class="salary-payslip">
           <button class="btn btn--outline" id="download-payslip-btn">
             <svg
               width="18"
@@ -406,7 +406,7 @@
             </svg>
             Отправить на email
           </button>
-        </div>
+        </div> -->
       </div>
     </main>
 

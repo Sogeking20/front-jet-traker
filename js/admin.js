@@ -40,6 +40,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 300)
   );
 
+    document.getElementById("employee-department-filter").addEventListener("change", async () => {
+    loadEmployees();
+  });
+
+  document.getElementById("employee-position-filter").addEventListener("change", async () => {
+    loadEmployees();
+  });
+
   // Обработка формы добавления сотрудника
   const employeeForm = document.getElementById("new-employee-form");
   if (employeeForm) {
@@ -62,29 +70,20 @@ document.addEventListener("DOMContentLoaded", function () {
   const monthlyAddSalaryGroup = document.getElementById(
     "monthly-salary-add-group"
   );
-  const hourlyAddRateGroup = document.getElementById("hourly-rate-add-group");
   const monthlyAddSalaryInput = document.getElementById(
     "employee-add-monthly-salary"
   );
-  const hourlyAddRateInput = document.getElementById(
-    "employee-add-hourly-rate"
-  );
-
   function updateAddVisibility() {
     const selected = paymentAddTypeSelect.value;
 
     if (selected === "FLAT_RATE") {
       monthlyAddSalaryGroup.style.display = "block";
-      hourlyAddRateGroup.style.display = "none";
 
       monthlyAddSalaryInput.required = true;
-      hourlyAddRateInput.required = false;
-      hourlyAddRateInput.value = "";
     } else if (selected === "HOURLY_RATE") {
-      hourlyAddRateGroup.style.display = "block";
       monthlyAddSalaryGroup.style.display = "none";
 
-      hourlyAddRateInput.required = true;
+      hourlyAddRaeInput.required = true;
       monthlyAddSalaryInput.required = false;
       monthlyAddSalaryInput.value = "";
     }
@@ -96,27 +95,20 @@ document.addEventListener("DOMContentLoaded", function () {
     "employee-edit-payment-type"
   );
   const monthlySalaryGroup = document.getElementById("monthly-salary-group");
-  const hourlyRateGroup = document.getElementById("hourly-rate-group");
   const monthlySalaryInput = document.getElementById(
     "employee-edit-monthly-salary"
   );
-  const hourlyRateInput = document.getElementById("employee-edit-hourly-rate");
 
   function updateVisibility() {
     const selected = paymentTypeSelect.value;
 
     if (selected === "FLAT_RATE") {
       monthlySalaryGroup.style.display = "block";
-      hourlyRateGroup.style.display = "none";
 
       monthlySalaryInput.required = true;
-      hourlyRateInput.required = false;
-      hourlyRateInput.value = "";
     } else if (selected === "HOURLY_RATE") {
-      hourlyRateGroup.style.display = "block";
       monthlySalaryGroup.style.display = "none";
 
-      hourlyRateInput.required = true;
       monthlySalaryInput.required = false;
       monthlySalaryInput.value = "";
     }
@@ -146,12 +138,19 @@ document.addEventListener("DOMContentLoaded", function () {
         },
       });
 
+      if (!response.ok) {
+        if (window.location.pathname !== "/") {
+          window.location.href = "/";
+        }
+      }
       const userData = await response.json();
       if (userData.user.role !== "MANAGER" && userData.user.role !== "BOSS") {
         window.location.href = "/dashboard";
       }
     } catch (e) {
-      window.location.href = "/dashboard";
+      if (window.location.pathname !== "/") {
+        window.location.href = "/";
+      }
     }
   }
 
@@ -159,7 +158,20 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://localhost:3000/api/employee", {
+      const departmentValue = document.getElementById("employee-department-filter").value;
+      const employeeValue = document.getElementById("employee-position-filter").value;
+
+        const params = new URLSearchParams();
+
+  if (departmentValue !== "all") {
+    params.append("subunit", departmentValue); // отправляется как ?subunit=sales
+  }
+
+  if (employeeValue !== "all") {
+    params.append("post", employeeValue);
+  }
+
+      const response = await fetch(`http://localhost:3000/api/employee?${params.toString()}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -357,8 +369,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (paymentType === "FLAT_RATE") {
       employee.salary = Number(form["employee-edit-monthly-salary"].value);
-    } else if (paymentType === "HOURLY_RATE") {
-      employee.hourlyRate = Number(form["employee-edit-hourly-rate"].value);
     }
 
     console.log(JSON.stringify(employee));
@@ -375,21 +385,23 @@ document.addEventListener("DOMContentLoaded", function () {
       body: JSON.stringify(employee),
     });
 
-    submitAddButton.disabled = false;
-    submitAddButton.textContent = "Обновить";
+    submitEditButton.disabled = false;
+    submitEditButton.textContent = "Обновить";
 
     if (!response.ok) {
       throw new Error(response.message || "Ошибка регистрации");
     }
 
+    const employeeData = await response.json();
+
     console.log("kaif");
 
     const index = config.employees.findIndex(
-      (emp) => emp.email === employee.email
+      (emp) => emp.email === employeeData.email
     );
 
     if (index !== -1) {
-      config.employees[index] = employee;
+      config.employees[index] = employeeData;
     }
     showNotification("Сотрудник успешно изменён!", "success");
     renderEmployeeTable();
@@ -508,6 +520,8 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    
+
     employees.forEach((employee) => {
       const row = document.createElement("tr");
       row.innerHTML = `
@@ -521,10 +535,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     <span>${employee.name}</span>
                   </div>
                 </td>
-                <td>${employee.post}</td>
-                <td>${employee.subunit}</td>
-                <td>${employee.role}</td>
-                <td>${employee.salary}</td>
+                <td>${employee.post === "part-time" ? "Парт-тайм" : employee.post === "manager" ? "Менеджер" : employee.post === "specialist" ? "Специалист" : "Сотрудник"}</td>
+                <td>${employee.subunit === "sales" ? "Отдел продаж" : employee.subunit === "support" ? "Служба поддержки" : employee.subunit === "hr" ? "HR" : "Неизвестно"}</td>
+                <td>${employee.role === "MANAGER" ? "Менеджер" : "Сотрудник"}</td>
+                <td>${employee.paymentType === "FLAT_RATE" ? employee.salary : 'Почасовая'}</td>
                 <td class="btn-block">
                   <button data-id="${employee.id}" id="edit-employee" class="btn btn--sm btn--outline">
                     Редактировать
@@ -565,9 +579,6 @@ document.addEventListener("DOMContentLoaded", function () {
     updateVisibility();
     document.getElementById("employee-edit-monthly-salary").value =
       employee.salary;
-    document.getElementById("employee-edit-hourly-rate").value =
-      employee.hourlyRate;
-
     // if (employee.position === "part-time") {
     //   document.getElementById("employee-hourly-rate").value =
     //     employee.hourlyRate;
@@ -629,18 +640,16 @@ document.addEventListener("DOMContentLoaded", function () {
     return new Date(dateString).toLocaleDateString("ru-RU", options);
   }
 
-  function showNotification(message, type = "success") {
-    const notification = document.createElement("div");
-    notification.className = `notification notification--${type}`;
-    notification.textContent = message;
+    function showNotification(message, type, container = document.body) {
+    const toast = document.createElement("div");
+    toast.className = type === "success" ? "success-toast" : "error-toast";
+    toast.innerText = message;
 
-    document.body.appendChild(notification);
+    document.body.appendChild(toast);
 
+    // Удалить плашку через 3 секунды
     setTimeout(() => {
-      notification.classList.add("notification--fade-out");
-      setTimeout(() => {
-        document.body.removeChild(notification);
-      }, 300);
+      toast.remove();
     }, 3000);
   }
 

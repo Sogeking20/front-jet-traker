@@ -19,6 +19,14 @@
     margin: 0;
 }
 
+.salary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+}
+
+
 .salary-period {
     display: flex;
     align-items: center;

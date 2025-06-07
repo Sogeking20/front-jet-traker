@@ -23,12 +23,19 @@ document.addEventListener("DOMContentLoaded", function () {
         },
       });
 
+      if (!response.ok) {
+        if (window.location.pathname !== "/") {
+          window.location.href = "/";
+        }
+      }
       const userData = await response.json();
       if (userData.user.role !== "EMPLOYEE") {
         window.location.href = "/admin/requests.html";
       }
     } catch (e) {
-      window.location.href = "/";
+      if (window.location.pathname !== "/") {
+        window.location.href = "/";
+      }
     }
   }
 

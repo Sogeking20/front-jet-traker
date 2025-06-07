@@ -301,49 +301,6 @@
               <div class="schedule-header-cell">Вт<br />30</div>
               <div class="schedule-header-cell">Ср<br />31</div>
             </div>
-
-            <div class="schedule-row">
-              <div class="schedule-employee-cell">
-                <div class="employee-avatar">
-                  <img src="assets/avatar-placeholder.png" alt="Иван Иванов" />
-                </div>
-                <div class="employee-info">
-                  <div class="employee-name">Иван Иванов</div>
-                  <div class="employee-position">Менеджер</div>
-                </div>
-              </div>
-              <div class="schedule-cell"></div>
-              <div class="schedule-cell day-shift">09:00-18:00</div>
-              <div class="schedule-cell day-shift">09:00-18:00</div>
-              <div class="schedule-cell day-shift">09:00-18:00</div>
-              <div class="schedule-cell day-shift">09:00-18:00</div>
-              <div class="schedule-cell"></div>
-              <div class="schedule-cell"></div>
-              <div class="schedule-cell day-shift">09:00-18:00</div>
-              <div class="schedule-cell day-shift">09:00-18:00</div>
-              <div class="schedule-cell day-shift">09:00-18:00</div>
-              <div class="schedule-cell day-shift">09:00-18:00</div>
-              <div class="schedule-cell day-shift">09:00-18:00</div>
-              <div class="schedule-cell"></div>
-              <div class="schedule-cell"></div>
-              <div class="schedule-cell day-shift">09:00-18:00</div>
-              <div class="schedule-cell night-shift">22:00-06:00</div>
-              <div class="schedule-cell night-shift">22:00-06:00</div>
-              <div class="schedule-cell day-shift">09:00-18:00</div>
-              <div class="schedule-cell day-shift">09:00-18:00</div>
-              <div class="schedule-cell"></div>
-              <div class="schedule-cell"></div>
-              <div class="schedule-cell day-shift">09:00-18:00</div>
-              <div class="schedule-cell day-shift">09:00-18:00</div>
-              <div class="schedule-cell day-shift">09:00-18:00</div>
-              <div class="schedule-cell day-shift">09:00-18:00</div>
-              <div class="schedule-cell day-shift">09:00-18:00</div>
-              <div class="schedule-cell"></div>
-              <div class="schedule-cell"></div>
-              <div class="schedule-cell vacation">Отпуск</div>
-              <div class="schedule-cell vacation">Отпуск</div>
-              <div class="schedule-cell"></div>
-            </div>
           </div>
         </div>
       </div>
@@ -398,6 +355,15 @@
                 <option value="PART_TIME">Парт-тайм</option>
               </select>
             </label>
+          </div>
+          <div id="hourly-rate-group" class="form-group" style="display: none;">
+            <label for="hourly-rate">Ставка (в час)</label>
+            <input
+              type="number"
+              id="hourly-rate"
+              min="0"
+              step="0.01"
+            />
           </div>
 
           <button

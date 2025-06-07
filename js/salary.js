@@ -32,11 +32,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Инициализация модуля
   function init() {
+    checkRole();
     setupEventListeners();
     loadInitialData();
   }
 
-  // Настройка обработчиков событий
+  async function checkRole() {
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      const response = await fetch("http://localhost:3000/api/user/profile", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        if (window.location.pathname !== "/") {
+          window.location.href = "/";
+        }
+      }
+    } catch (e) {
+      if (window.location.pathname !== "/") {
+        window.location.href = "/";
+      }
+    }
+  }
+
   function setupEventListeners() {
     // Выбор периода
     if (elements.periodSelect) {
@@ -64,7 +86,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Загрузка начальных данных
   function loadInitialData() {
     state.currentPeriod = getSavedPeriodPreference() || config.defaultPeriod;
 
@@ -126,48 +147,37 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  async function handleEmailSubmit(event) {
-    event.preventDefault();
+  const currentMonthElement = document.getElementById("current-month");
+  const prevMonthBtn = document.getElementById("prev-month-btn");
+  const nextMonthBtn = document.getElementById("next-month-btn");
 
-    const emailInput = elements.emailForm.querySelector('input[type="email"]');
-    const email = emailInput.value.trim();
+  let currentDate = new Date();
 
-    if (!validateEmail(email)) {
-      showNotification(
-        "Введите корректный email",
-        "error",
-        elements.emailModal
-      );
-      return;
-    }
-
-    try {
-      setLoadingState(
-        true,
-        elements.emailForm.querySelector('button[type="submit"]')
-      );
-
-      await sendPayslipByEmail(state.currentPayslipId, email);
-
-      // Сохраняем email для будущих отправок
-      saveUserEmail(email);
-
-      showNotification("Расчетный лист отправлен на email", "success");
-      closeModal(elements.emailModal);
-    } catch (error) {
-      console.error("Email send error:", error);
-      showNotification(
-        "Ошибка при отправке на email",
-        "error",
-        elements.emailModal
-      );
-    } finally {
-      setLoadingState(
-        false,
-        elements.emailForm.querySelector('button[type="submit"]')
-      );
-    }
+  function updateCalendar() {
+    const options = { month: "long", year: "numeric" };
+    currentMonthElement.textContent = currentDate.toLocaleDateString(
+      "ru-RU",
+      options
+    );
   }
+
+  updateCalendar();
+
+  async function updateTable() {
+    loadPayslipData(currentDate.getMonth() + 1, currentDate.getFullYear());
+  }
+
+  prevMonthBtn.addEventListener("click", function () {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    updateCalendar();
+    updateTable();
+  });
+
+  nextMonthBtn.addEventListener("click", function () {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    updateCalendar();
+    updateTable();
+  });
 
   async function handleRetry() {
     if (state.retryCount >= config.maxRetryAttempts) {
@@ -180,12 +190,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Основные функции
-  async function loadPayslipData(period) {
+  async function loadPayslipData(month, year) {
     try {
       setLoadingState(true);
       hideError();
 
-      const data = await fetchPayslipData(period);
+      const data = await fetchPayslipData(month, year);
       state.currentPayslipId = data.id;
 
       renderPayslip(data);
@@ -198,17 +208,24 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  async function fetchPayslipData(period) {
+  async function fetchPayslipData(month, year) {
     const token = localStorage.getItem("accessToken");
 
-    const response = await fetch(`${config.apiBaseUrl}/salary`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
+    console.log(month, year);
+
+    const response = await fetch(
+      `${config.apiBaseUrl}/salary?${
+        month && year ? `month=${month}&year=${year}` : ""
+      }`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -266,10 +283,43 @@ document.addEventListener("DOMContentLoaded", function () {
 
     tableBody.innerHTML = "";
 
-    if (data.salary.length === 0) {
+        const salaryAll = document.querySelector("#salary-all");
+    const salaryDetail = document.querySelector("#card-salary-detail");
+    const salaryDay = document.querySelector("#card-salary-day");
+    const salaryNight = document.querySelector("#card-salary-night");
+    const salaryDaily = document.querySelector("#card-salary-daily");
+    const salaryPartTime = document.querySelector("#card-salary-part-time");
+
+    const salaryTaxAll = document.querySelector("#salary-tax-all");
+    const salaryTax = document.querySelector("#salary-card-tax");
+
+    const salaryResultAll = document.querySelector("#salary-result-all");
+    const salaryResult = document.querySelector("#salary-result");
+
+    const allHaveHourlyRate = data.shift.every(
+      (shift) => shift.hourlyRate != null
+    );
+    const noneHaveHourlyRate = data.shift.every(
+      (shift) => shift.hourlyRate == null
+    );
+
+    if (data.shift.length === 0) {
       const emptyRow = document.createElement("tr");
       emptyRow.innerHTML = `<td colspan="7" class="text-center">Ничего не найдены</td>`;
       tableBody.appendChild(emptyRow);
+
+            salaryAll.innerHTML = `0 <span>₽</span>`;
+      salaryDetail.innerHTML = `0 <span>₽</span>`;
+      salaryDay.innerHTML = `0 <span>₽</span>`;
+      salaryNight.innerHTML = `0 <span>₽</span>`;
+      salaryDaily.innerHTML = `0 <span>₽</span>`;
+      salaryPartTime.innerHTML = `0 <span>₽</span>`;
+
+      salaryTax.innerHTML = `- 0 <span>₽</span>`;
+      salaryTaxAll.innerHTML = `- 0 <span>₽</span>`;
+
+      salaryResult.innerHTML = `0 <span>₽</span>`;
+      salaryResultAll.innerHTML = `0 <span>₽</span>`;
       return;
     }
 
@@ -308,26 +358,6 @@ document.addEventListener("DOMContentLoaded", function () {
             `;
       tableBody.appendChild(row);
     });
-
-    const salaryAll = document.querySelector("#salary-all");
-    const salaryDetail = document.querySelector("#card-salary-detail");
-    const salaryDay = document.querySelector("#card-salary-day");
-    const salaryNight = document.querySelector("#card-salary-night");
-    const salaryDaily = document.querySelector("#card-salary-daily");
-    const salaryPartTime = document.querySelector("#card-salary-part-time");
-
-    const salaryTaxAll = document.querySelector("#salary-tax-all");
-    const salaryTax = document.querySelector("#salary-card-tax");
-
-    const salaryResultAll = document.querySelector("#salary-result-all");
-    const salaryResult = document.querySelector("#salary-result");
-
-    const allHaveHourlyRate = data.shift.every(
-      (shift) => shift.hourlyRate != null
-    );
-    const noneHaveHourlyRate = data.shift.every(
-      (shift) => shift.hourlyRate == null
-    );
 
     let totalDay = 0;
     let totalNight = 0;
@@ -549,13 +579,9 @@ document.addEventListener("DOMContentLoaded", function () {
     return localStorage.getItem("payslip_period");
   }
 
-  function showNotification(
-    message,
-    type = "success",
-    container = document.body
-  ) {
+  function showNotification(message, type, container = document.body) {
     const toast = document.createElement("div");
-    toast.className = "error-toast";
+    toast.className = type === "success" ? "success-toast" : "error-toast";
     toast.innerText = message;
 
     document.body.appendChild(toast);

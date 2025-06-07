@@ -24,11 +24,18 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       const userData = await response.json();
+      if (!response.ok) {
+        if (window.location.pathname !== "/") {
+          window.location.href = "/";
+        }
+      }
       if (userData.user.role !== "MANAGER" && userData.user.role !== "BOSS") {
         window.location.href = "/dashboard";
       }
     } catch (e) {
-      window.location.href = "/dashboard";
+      if (window.location.pathname !== "/") {
+        window.location.href = "/";
+      }
     }
   }
 

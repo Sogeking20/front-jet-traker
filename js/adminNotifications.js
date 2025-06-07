@@ -23,12 +23,19 @@ document.addEventListener("DOMContentLoaded", function () {
         },
       });
 
+      if (!response.ok) {
+        if (window.location.pathname !== "/") {
+          window.location.href = "/";
+        }
+      }
       const userData = await response.json();
       if (userData.user.role !== "MANAGER" && userData.user.role !== "BOSS") {
         window.location.href = "/dashboard";
       }
     } catch (e) {
-      window.location.href = "/dashboard";
+      if (window.location.pathname !== "/") {
+        window.location.href = "/";
+      }
     }
   }
 

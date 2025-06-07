@@ -22,20 +22,15 @@ document.addEventListener("DOMContentLoaded", function () {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      const userData = await response.json();
-      console.log(userData);
-      if (userData.user.role === "EMPLOYEE" && userData.user.companyId) {
-        document.getElementById("#create-request-btn").style.display = "inline";
-        document
-          .getElementById("#create-request-btn")
-          .classList.toggle("hidden");
-      }
-      if (!userData.user.companyId) {
-        document.getElementById("#create-company-btn").style.display = "inline";
+      if (!response.ok) {
+        if (window.location.pathname !== "/") {
+          window.location.href = "/";
+        }
       }
     } catch (e) {
-      // window.location.href = "/";
+      if (window.location.pathname !== "/") {
+        window.location.href = "/";
+      }
     }
   }
 

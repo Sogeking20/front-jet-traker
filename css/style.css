@@ -64,6 +64,20 @@ img {
   animation: fadein 0.5s, fadeout 0.5s 2.5s;
 }
 
+.success-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: #4caf50;
+  color: white;
+  padding: 16px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  font-family: sans-serif;
+  z-index: 1000;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
 /* Buttons */
 .btn {
   display: inline;
