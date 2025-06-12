@@ -40,13 +40,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 300)
   );
 
-    document.getElementById("employee-department-filter").addEventListener("change", async () => {
-    loadEmployees();
-  });
+  document
+    .getElementById("employee-department-filter")
+    .addEventListener("change", async () => {
+      loadEmployees();
+    });
 
-  document.getElementById("employee-position-filter").addEventListener("change", async () => {
-    loadEmployees();
-  });
+  document
+    .getElementById("employee-position-filter")
+    .addEventListener("change", async () => {
+      loadEmployees();
+    });
 
   // Обработка формы добавления сотрудника
   const employeeForm = document.getElementById("new-employee-form");
@@ -83,7 +87,6 @@ document.addEventListener("DOMContentLoaded", function () {
     } else if (selected === "HOURLY_RATE") {
       monthlyAddSalaryGroup.style.display = "none";
 
-      hourlyAddRaeInput.required = true;
       monthlyAddSalaryInput.required = false;
       monthlyAddSalaryInput.value = "";
     }
@@ -131,12 +134,15 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://api.jettraker.com/api/user/profile",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         if (window.location.pathname !== "/") {
@@ -158,25 +164,32 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const departmentValue = document.getElementById("employee-department-filter").value;
-      const employeeValue = document.getElementById("employee-position-filter").value;
+      const departmentValue = document.getElementById(
+        "employee-department-filter"
+      ).value;
+      const employeeValue = document.getElementById(
+        "employee-position-filter"
+      ).value;
 
-        const params = new URLSearchParams();
+      const params = new URLSearchParams();
 
-  if (departmentValue !== "all") {
-    params.append("subunit", departmentValue); // отправляется как ?subunit=sales
-  }
+      if (departmentValue !== "all") {
+        params.append("subunit", departmentValue); // отправляется как ?subunit=sales
+      }
 
-  if (employeeValue !== "all") {
-    params.append("post", employeeValue);
-  }
+      if (employeeValue !== "all") {
+        params.append("post", employeeValue);
+      }
 
-      const response = await fetch(`http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/employee?${params.toString()}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `https://api.jettraker.com/api/employee?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const savedEmployees = await response.json();
       console.log(savedEmployees);
@@ -314,15 +327,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (paymentType === "FLAT_RATE") {
       employee.salary = Number(form["employee-add-monthly-salary"].value);
-    } else if (paymentType === "HOURLY_RATE") {
-      employee.hourlyRate = Number(form["employee-add-hourly-rate"].value);
     }
 
     console.log(JSON.stringify(employee));
 
     const token = localStorage.getItem("accessToken");
 
-    const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/employee", {
+    const response = await fetch("https://api.jettraker.com/api/employee", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -375,7 +386,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const token = localStorage.getItem("accessToken");
 
-    const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/employee", {
+    const response = await fetch("https://api.jettraker.com/api/employee", {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -424,7 +435,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const token = localStorage.getItem("accessToken");
 
-    const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/employee", {
+    const response = await fetch("https://api.jettraker.com/api/employee", {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -506,6 +517,27 @@ document.addEventListener("DOMContentLoaded", function () {
     renderEmployeeTable(filtered);
   }
 
+  const searchInputName = document.getElementById("employee-search");
+
+  function filterEmployees(searchText) {
+    const lowerSearch = String(searchText).toLowerCase();
+    return config.employees.filter((emp) => {
+      if (!emp) return false; // Защита от undefined
+
+      const name = (emp.name || "").toLowerCase();
+      const email = (emp.email || "").toLowerCase();
+
+      return name.includes(lowerSearch) || email.includes(lowerSearch);
+    });
+  }
+
+  searchInputName.addEventListener("input", () => {
+    const searchValue = searchInputName.value;
+    const filtered = filterEmployees(searchValue);
+    // config.employees = filtered;
+    renderEmployeeTable(filtered);
+  });
+
   function renderEmployeeTable(employees = config.employees) {
     const tableBody = document.querySelector("#employees-table");
     if (!tableBody) return;
@@ -520,8 +552,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    
-
     employees.forEach((employee) => {
       const row = document.createElement("tr");
       row.innerHTML = `
@@ -535,15 +565,41 @@ document.addEventListener("DOMContentLoaded", function () {
                     <span>${employee.name}</span>
                   </div>
                 </td>
-                <td>${employee.post === "part-time" ? "Парт-тайм" : employee.post === "manager" ? "Менеджер" : employee.post === "specialist" ? "Специалист" : "Сотрудник"}</td>
-                <td>${employee.subunit === "sales" ? "Отдел продаж" : employee.subunit === "support" ? "Служба поддержки" : employee.subunit === "hr" ? "HR" : "Неизвестно"}</td>
-                <td>${employee.role === "MANAGER" ? "Менеджер" : "Сотрудник"}</td>
-                <td>${employee.paymentType === "FLAT_RATE" ? employee.salary : 'Почасовая'}</td>
+                <td>${
+                  employee.post === "part-time"
+                    ? "Парт-тайм"
+                    : employee.post === "manager"
+                    ? "Менеджер"
+                    : employee.post === "specialist"
+                    ? "Специалист"
+                    : "Сотрудник"
+                }</td>
+                <td>${
+                  employee.subunit === "sales"
+                    ? "Отдел продаж"
+                    : employee.subunit === "support"
+                    ? "Служба поддержки"
+                    : employee.subunit === "hr"
+                    ? "HR"
+                    : "Неизвестно"
+                }</td>
+                <td>${
+                  employee.role === "MANAGER" ? "Менеджер" : "Сотрудник"
+                }</td>
+                <td>${
+                  employee.paymentType === "FLAT_RATE"
+                    ? employee.salary
+                    : "Почасовая"
+                }</td>
                 <td class="btn-block">
-                  <button data-id="${employee.id}" id="edit-employee" class="btn btn--sm btn--outline">
+                  <button data-id="${
+                    employee.id
+                  }" id="edit-employee" class="btn btn--sm btn--outline">
                     Редактировать
                   </button>
-                  <button data-id="${employee.id}" id="delete-employee" class="btn btn--sm btn--danger">Удалить</button>
+                  <button data-id="${
+                    employee.id
+                  }" id="delete-employee" class="btn btn--sm btn--danger">Удалить</button>
                 </td>
             `;
       tableBody.appendChild(row);
@@ -640,7 +696,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return new Date(dateString).toLocaleDateString("ru-RU", options);
   }
 
-    function showNotification(message, type, container = document.body) {
+  function showNotification(message, type, container = document.body) {
     const toast = document.createElement("div");
     toast.className = type === "success" ? "success-toast" : "error-toast";
     toast.innerText = message;

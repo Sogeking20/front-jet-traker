@@ -167,7 +167,7 @@ img {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--primary-color);
-  display: flex;
+  display: none;
   align-items: center;
   gap: 10px;
 }
@@ -294,6 +294,16 @@ img {
   }
 }
 
+.logo-btn {
+  display: flex;
+}
+
+@media (min-width: 576px) {
+  .logo {
+    display: flex;
+  }
+}
+
 @media (max-width: 576px) {
   .nav {
     margin-left: 10px;
@@ -342,10 +352,6 @@ main {
 @media (max-width: 576px) {
   .auth-btn {
     padding: 8px 15px;
-  }
-
-  .logo-btn {
-    display: none;
   }
 
   .nav {

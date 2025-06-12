@@ -16,12 +16,15 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://api.jettraker.com/api/user/profile",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         if (window.location.pathname !== "/") {
@@ -51,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const token = localStorage.getItem("accessToken");
 
       const response = await fetch(
-        "http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/notification/company",
+        "https://api.jettraker.com/api/notification/company",
         {
           method: "GET",
           headers: {
@@ -98,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const time = `${hours}:${minutes} ${day}.${month}.${year}`;
       tableBody.insertAdjacentHTML(
-        "beforeend",
+        "afterbegin",
         `
         <div class="notification-item ${notification.read ? "" : "unread"}">
             <div class="notification-icon">
@@ -168,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const token = localStorage.getItem("accessToken");
 
     const response = await fetch(
-      `http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/notification/company/${id}`,
+      `https://api.jettraker.com/api/notification/company/${id}`,
       {
         method: "DELETE",
         headers: {
@@ -205,7 +208,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const token = localStorage.getItem("accessToken");
 
     const response = await fetch(
-      `http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/notification/company`,
+      `https://api.jettraker.com/api/notification/company`,
       {
         method: "DELETE",
         headers: {

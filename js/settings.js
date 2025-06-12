@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
   async function loadCompany() {
     const token = localStorage.getItem("accessToken");
 
-    fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/company", {
+    fetch("https://api.jettraker.com/api/company", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -48,12 +48,15 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://api.jettraker.com/api/user/profile",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         if (window.location.pathname !== "/") {
@@ -85,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const token = localStorage.getItem("accessToken");
 
-    const response = await fetch(`http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/company`, {
+    const response = await fetch(`https://api.jettraker.com/api/company`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -105,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
     company = await response.json();
   }
 
-          function showNotification(message, type, container = document.body) {
+  function showNotification(message, type, container = document.body) {
     const toast = document.createElement("div");
     toast.className = type === "success" ? "success-toast" : "error-toast";
     toast.innerText = message;

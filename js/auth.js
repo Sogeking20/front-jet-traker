@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Конфигурация приложения
   const config = {
-    apiBaseUrl: "http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api",
+    apiBaseUrl: "https://api.jettraker.com/api",
     minPasswordLength: 8,
     tokenKey: "jettraker_token",
     roleKey: "jettraker_role",
@@ -12,27 +12,29 @@ document.addEventListener("DOMContentLoaded", function () {
   init();
   initAuth();
 
-   function init() {
+  function init() {
     checkRole();
   }
 
-      async function checkRole() {
+  async function checkRole() {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://api.jettraker.com/api/user/profile",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      console.log(response)
+      console.log(response);
       if (response.ok) {
-          window.location.href = "/dashboard";
+        window.location.href = "/dashboard";
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   // Переключение между вкладками входа и регистрации

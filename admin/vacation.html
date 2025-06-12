@@ -10,6 +10,12 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
     />
+    <link
+      type="image/x-icon"
+      href="../assets/favicon.ico"
+      rel="shortcut icon"
+    />
+    <link type="Image/x-icon" href="../assets/favicon.ico" rel="icon" />
   </head>
   <body>
     <!-- Общий header -->
@@ -94,7 +100,7 @@
           </a>
         </nav>
 
-        <div class="auth-buttons">
+        <div class="auth-buttons" style="display: none">
           <a href="/auth.html?action=login" class="btn btn--outline auth-btn"
             >Вход</a
           >
@@ -105,9 +111,9 @@
 
         <div class="user-menu">
           <div class="user-menu__avatar">
-            <img src="assets/avatar-placeholder.png" alt="Аватар" />
+            <img src="../assets/avatar-placeholder.png" alt="Аватар" />
           </div>
-          <div class="user-menu__name">Иван Иванов</div>
+          <div class="user-menu__name"></div>
           <div class="user-menu__dropdown">
             <a id="dashboard-link" href="/dashboard">
               <svg
@@ -191,6 +197,19 @@
 
     <main class="vacation-main">
       <div class="container">
+        <div class="vacation-header">
+          <h1 class="vacation-title">Управление отпусками</h1>
+          <button class="btn btn--primary" id="add-vacation-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 5V19M5 12H19"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+            </svg>
+            Добавить отпуск
+          </button>
+        </div>
         <div class="vacation-requests">
           <h2 class="section-title">Запланированные отпуска</h2>
           <table class="vacation-table">
@@ -205,16 +224,6 @@
               </tr>
             </thead>
             <tbody id="vacation-list">
-              <tr>
-                <td>Иван Иванов</td>
-                <td>01.06 - 15.06.2023</td>
-                <td>14</td>
-                <td>Оплачиваемый</td>
-                <td><span class="status-badge approved">Утвержден</span></td>
-                <td>
-                  <button class="btn btn--sm btn--outline">Изменить</button>
-                </td>
-              </tr>
               <!-- Другие записи -->
             </tbody>
           </table>
@@ -245,24 +254,19 @@
               required
             />
           </div>
-          <div class="form-group">
+          <!-- <div class="form-group">
             <label for="vacation-type">Тип</label>
             <select id="vacation-type" required>
               <option value="">Выберите тип</option>
               <option value="PAID">Оплачиваемый</option>
               <option value="UNPAID">Неоплачиваемый</option>
             </select>
-          </div>
-          <div class="form-group">
-            <label for="vacation-status">Статус</label>
-            <select id="vacation-status" required>
-              <option value="">Выберите статус</option>
-              <option value="sales">Утвержден</option>
-              <option value="support">На усмотрении</option>
-              <option value="hr">Отклонен</option>
-            </select>
-          </div>
-          <button type="submit" id="add-vacation-btn-submit" class="btn btn--primary btn--block">
+          </div> -->
+          <button
+            type="submit"
+            id="add-vacation-btn-submit"
+            class="btn btn--primary btn--block"
+          >
             Добавить
           </button>
         </form>
@@ -289,24 +293,23 @@
               required
             />
           </div>
-          <div class="form-group">
+          <!-- <div class="form-group">
             <label for="edit-vacation-type">Тип</label>
             <select id="edit-vacation-type" required>
               <option value="PAID">Оплачиваемый</option>
               <option value="UNPAID">Неоплачиваемый</option>
             </select>
+          </div> -->
+          <div class="submit-actions">
+            <button id="delete-vacation-btn-submit" class="btn">Удалить</button>
+            <button
+              type="submit"
+              id="submit-edit-vacation"
+              class="btn btn--primary"
+            >
+              Обновить
+            </button>
           </div>
-          <div class="form-group">
-            <label for="edit-vacation-status">Статус</label>
-            <select id="edit-vacation-status" required>
-              <option value="APPROVED">Утвержден</option>
-              <option value="PENDING">На усмотрении</option>
-              <option value="REJECTED">Отклонен</option>
-            </select>
-          </div>
-          <button type="submit" id="submit-edit-vacation" class="btn btn--primary btn--block">
-            Обновить
-          </button>
         </form>
       </div>
     </div>
@@ -333,9 +336,9 @@
             <h4 class="footer__title">Контакты</h4>
             <ul class="footer__links">
               <li>
-                <a href="mailto:support@jettraker.com">support@jettraker.com</a>
+                <a href="mailto:Jettraker@gmail.com">Jettraker@gmail.com</a>
               </li>
-              <li><a href="tel:+78001234567">8 (800) 123-45-67</a></li>
+              <li><a href="https://t.me/amostovoj">@amostovoj</a></li>
             </ul>
           </div>
         </div>

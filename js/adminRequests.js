@@ -16,12 +16,15 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://api.jettraker.com/api/user/profile",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const userData = await response.json();
       if (!response.ok) {
@@ -49,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log(upperStatus);
 
       const response = await fetch(
-        `http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/request/company?status=${encodeURIComponent(
+        `https://api.jettraker.com/api/request/company?status=${encodeURIComponent(
           upperStatus
         )}`,
         {
@@ -105,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const toDate = new Date(request.toDate);
 
       tableBody.insertAdjacentHTML(
-        "beforeend",
+        "afterbegin",
         `
           <div class="request-item pending">
             <div class="request-type vacation mb-1">
@@ -159,17 +162,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const token = localStorage.getItem("accessToken");
 
-    const response = await fetch(`http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/request/${id}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        status: status,
-      }),
-    });
+    const response = await fetch(
+      `https://api.jettraker.com/api/request/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          status: status,
+        }),
+      }
+    );
 
     approvedBtn.forEach((btn) => (btn.disabled = false));
     rejectedBtn.forEach((btn) => (btn.disabled = false));

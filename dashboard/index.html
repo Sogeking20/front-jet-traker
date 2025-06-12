@@ -6,6 +6,12 @@
     <title>JetTraker - Личный кабинет</title>
     <link rel="stylesheet" href="../css/dashboard.css" />
     <link rel="stylesheet" href="../css/style.css" />
+    <link
+      type="image/x-icon"
+      href="../assets/favicon.ico"
+      rel="shortcut icon"
+    />
+    <link type="Image/x-icon" href="../assets/favicon.ico" rel="icon" />
   </head>
   <body>
     <header class="header">
@@ -89,7 +95,7 @@
           </a>
         </nav>
 
-        <div class="auth-buttons">
+        <div class="auth-buttons" style="display: none">
           <a href="/auth.html?action=login" class="btn btn--outline auth-btn"
             >Вход</a
           >
@@ -100,9 +106,9 @@
 
         <div class="user-menu">
           <div class="user-menu__avatar">
-            <img src="assets/avatar-placeholder.png" alt="Аватар" />
+            <img src="../assets/avatar-placeholder.png" alt="Аватар" />
           </div>
-          <div class="user-menu__name">Иван Иванов</div>
+          <div class="user-menu__name"></div>
           <div class="user-menu__dropdown">
             <a id="dashboard-link" href="/dashboard">
               <svg
@@ -191,16 +197,12 @@
             <div class="sidebar-widget">
               <div class="user-profile">
                 <div class="user-profile__avatar">
-                  <img src="assets/avatar-placeholder.png" alt="Аватар" />
+                  <img src="../assets/avatar-placeholder.png" alt="Аватар" />
                 </div>
                 <div class="user-profile__info">
-                  <h3 id="user-name" class="user-profile__name">Иван Иванов</h3>
-                  <p id="user-position" class="user-profile__position">
-                    Менеджер
-                  </p>
-                  <p id="user-subunit" class="user-profile__department">
-                    Отдел продаж
-                  </p>
+                  <h3 id="user-name" class="user-profile__name"></h3>
+                  <p id="user-position" class="user-profile__position"></p>
+                  <p id="user-subunit" class="user-profile__department"></p>
                 </div>
               </div>
             </div>
@@ -231,10 +233,18 @@
             <div class="dashboard-header">
               <h1 class="dashboard-title">Личный кабинет</h1>
               <div class="dashboard-actions">
-                <button class="btn btn--primary" id="create-request-btn">
+                <button
+                  class="btn btn--primary"
+                  id="create-request-btn"
+                  style="display: none"
+                >
                   Создать заявку
                 </button>
-                <button class="btn btn--primary" id="create-company-btn">
+                <button
+                  class="btn btn--primary"
+                  id="create-company-btn"
+                  style="display: none"
+                >
                   Создать компанию
                 </button>
               </div>
@@ -248,22 +258,7 @@
 
               <div class="dashboard-widget">
                 <h3 class="dashboard-widget__title">Мои заявки</h3>
-                <div id="user-requests" class="user-requests">
-                  <div class="user-request">
-                    <div class="user-request__type vacation">Отпуск</div>
-                    <div class="user-request__dates">
-                      01.06.2023 - 15.06.2023
-                    </div>
-                    <div class="user-request__status approved">Утверждено</div>
-                  </div>
-                  <div class="user-request">
-                    <div class="user-request__type day-off">Отгул</div>
-                    <div class="user-request__dates">20.05.2023</div>
-                    <div class="user-request__status pending">
-                      На рассмотрении
-                    </div>
-                  </div>
-                </div>
+                <div id="user-requests" class="user-requests"></div>
               </div>
 
               <div class="dashboard-widget">
@@ -377,9 +372,9 @@
             <h4 class="footer__title">Контакты</h4>
             <ul class="footer__links">
               <li>
-                <a href="mailto:support@jettraker.com">support@jettraker.com</a>
+                <a href="mailto:Jettraker@gmail.com">Jettraker@gmail.com</a>
               </li>
-              <li><a href="tel:+78001234567">8 (800) 123-45-67</a></li>
+              <li><a href="https://t.me/amostovoj">@amostovoj</a></li>
             </ul>
           </div>
         </div>

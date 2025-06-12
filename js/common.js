@@ -2,9 +2,9 @@
 (function () {
   "use strict";
 
-  // Конфигурация приложения
+  // Ккконфигурация приложения
   const config = {
-    apiBaseUrl: "https://localhost:3000/api",
+    apiBaseUrl: "https://api.jettraker.com/api",
     authTokenKey: "jettraker_token",
     authRoleKey: "jettraker_role",
     authUserKey: "jettraker_user",
@@ -78,9 +78,7 @@
     DOM.adminNotificationsLinks = document.querySelectorAll(
       "#admin-link, #admin-sidebar-link, #admin-notifications"
     );
-    DOM.createCompanyButtons = document.querySelectorAll(
-      "#create-company-btn"
-    );
+    DOM.createCompanyButtons = document.querySelectorAll("#create-company-btn");
     DOM.userNav = document.querySelectorAll(".user-menu__name");
     DOM.teamLinks = document.querySelectorAll("#team-link");
     DOM.logoutButtons = document.querySelectorAll("#logout-btn");
@@ -284,12 +282,15 @@
 
       console.log(token);
 
-      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://api.jettraker.com/api/user/profile",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.status === 401) {
         // accessToken устарел — пробуем обновить
@@ -326,7 +327,7 @@
     });
 
     DOM.logoButton.forEach((btn) => {
-      btn.classList.toggle("logo-btn", isAuthenticated);
+      btn.classList.toggle("logo-btn", !isAuthenticated);
     });
 
     DOM.userMenus.forEach((menu) => {
@@ -336,14 +337,11 @@
 
     if (isAuthenticated) {
       const userRole = userData.user.role;
-      const userNotifications = userData.notifications.filter(
-        (n) => n.userId === userData.user.id
-      );
-      const companyNotifications = userData.notifications.filter(
-        (n) => n.companyId === userData.user.companyId
-      );
+      const userNotifications = userData.notifications.userNotifications;
+      const companyNotifications = userData.notifications.companyNotifications;
       // const isAdmin = config.adminRoles.includes(userRole);
-      const isAdmin = userRole === "MANAGER" || userRole === "BOSS" ? true : false;
+      const isAdmin =
+        userRole === "MANAGER" || userRole === "BOSS" ? true : false;
       const isBoss = userRole === "BOSS" ? true : false;
       const hasCompany = userData.user.companyId !== null ? true : false;
 
@@ -352,7 +350,7 @@
         link.classList.toggle("hidden", !isAdmin);
       });
 
-            DOM.addShiftButtons.forEach((link) => {
+      DOM.addShiftButtons.forEach((link) => {
         link.style.display = isAdmin ? "inline" : "none";
         link.classList.toggle("hidden", !isAdmin);
       });
@@ -368,20 +366,17 @@
       });
 
       DOM.adminNotificationsLinks.forEach((link) => {
-        link.classList.toggle(
-          "notifications",
-          isAdmin && companyNotifications.length > 0
-        );
+        link.classList.toggle("notifications", isAdmin && companyNotifications);
       });
 
       DOM.userNotificationsLinks.forEach((link) => {
-        link.classList.toggle("notifications", userNotifications.length > 0);
+        link.classList.toggle("notifications", userNotifications);
       });
 
       DOM.userNav.forEach((link) => {
         link.classList.toggle(
           "notifications",
-          userData.notifications.length > 0
+          userNotifications || companyNotifications
         );
       });
 
@@ -442,7 +437,7 @@
 
   async function logout() {
     try {
-      await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/auth/logout", {
+      await fetch("https://api.jettraker.com/api/auth/logout", {
         method: "POST",
         credentials: "include", // важно для передачи cookie
       });

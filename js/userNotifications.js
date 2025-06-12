@@ -16,21 +16,20 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://api.jettraker.com/api/user/profile",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      const userData = await response.json();
       if (!response.ok) {
         if (window.location.pathname !== "/") {
           window.location.href = "/";
         }
-      }
-      if (userData.user.role !== "MANAGER" && userData.user.role !== "BOSS") {
-        window.location.href = "/dashboard";
       }
     } catch (e) {
       if (window.location.pathname !== "/") {
@@ -51,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const token = localStorage.getItem("accessToken");
 
       const response = await fetch(
-        "http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/notification/employee",
+        "https://api.jettraker.com/api/notification/employee",
         {
           method: "GET",
           headers: {
@@ -98,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const time = `${hours}:${minutes} ${day}.${month}.${year}`;
       tableBody.insertAdjacentHTML(
-        "beforeend",
+        "afterbegin",
         `
           <div class="notification-item ${notification.read ? "" : "unread"}">
               <div class="notification-icon">
@@ -168,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const token = localStorage.getItem("accessToken");
 
     const response = await fetch(
-      `http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/notification/employee/${id}`,
+      `https://api.jettraker.com/api/notification/employee/${id}`,
       {
         method: "DELETE",
         headers: {
@@ -205,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const token = localStorage.getItem("accessToken");
 
     const response = await fetch(
-      `http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/notification/employee`,
+      `https://api.jettraker.com/api/notification/employee`,
       {
         method: "DELETE",
         headers: {

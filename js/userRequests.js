@@ -16,21 +16,20 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://api.jettraker.com/api/user/profile",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         if (window.location.pathname !== "/") {
           window.location.href = "/";
         }
-      }
-      const userData = await response.json();
-      if (userData.user.role !== "EMPLOYEE") {
-        window.location.href = "/admin/requests.html";
       }
     } catch (e) {
       if (window.location.pathname !== "/") {
@@ -49,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log(upperStatus);
 
       const response = await fetch(
-        `http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/request/employee?status=${encodeURIComponent(
+        `https://api.jettraker.com/api/request/employee?status=${encodeURIComponent(
           upperStatus
         )}`,
         {
@@ -105,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const toDate = new Date(request.toDate);
 
       tableBody.insertAdjacentHTML(
-        "beforeend",
+        "afterbegin",
         `
             <div class="request-item pending">
               <div class="request-type vacation mb-1">

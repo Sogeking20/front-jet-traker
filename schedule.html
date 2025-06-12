@@ -6,6 +6,8 @@
     <title>JetTraker - График работы</title>
     <link rel="stylesheet" href="css/schedule.css" />
     <link rel="stylesheet" href="css/style.css" />
+    <link type="image/x-icon" href="/assets/favicon.ico" rel="shortcut icon" />
+    <link type="Image/x-icon" href="/assets/favicon.ico" rel="icon" />
   </head>
   <body>
     <header class="header">
@@ -89,7 +91,7 @@
           </a>
         </nav>
 
-        <div class="auth-buttons">
+        <div class="auth-buttons" style="display: none">
           <a href="/auth.html?action=login" class="btn btn--outline auth-btn"
             >Вход</a
           >
@@ -102,7 +104,7 @@
           <div class="user-menu__avatar">
             <img src="assets/avatar-placeholder.png" alt="Аватар" />
           </div>
-          <div class="user-menu__name">Иван Иванов</div>
+          <div class="user-menu__name"></div>
           <div class="user-menu__dropdown">
             <a id="dashboard-link" href="/dashboard">
               <svg
@@ -196,7 +198,11 @@
             <button class="btn btn--outline" id="next-month-btn">
               След. месяц &gt;
             </button>
-            <button class="btn btn--primary" id="add-shift-btn">
+            <button
+              class="btn btn--primary"
+              id="add-shift-btn"
+              style="display: none"
+            >
               Добавить смену
             </button>
           </div>
@@ -266,7 +272,7 @@
         <div class="schedule-actions"></div>
 
         <div class="schedule-container">
-          <div class="schedule-grid">
+          <div id="schedule-grid" class="schedule-grid">
             <div class="schedule-header-row">
               <div class="schedule-header-cell">Сотрудник</div>
               <div class="schedule-header-cell">Пн<br />1</div>
@@ -356,14 +362,9 @@
               </select>
             </label>
           </div>
-          <div id="hourly-rate-group" class="form-group" style="display: none;">
+          <div id="hourly-rate-group" class="form-group" style="display: none">
             <label for="hourly-rate">Ставка (в час)</label>
-            <input
-              type="number"
-              id="hourly-rate"
-              min="0"
-              step="0.01"
-            />
+            <input type="number" id="hourly-rate" min="0" step="0.01" />
           </div>
 
           <button
@@ -374,6 +375,15 @@
             Сохранить
           </button>
         </form>
+      </div>
+    </div>
+
+    <div class="modal" id="day-shifts-modal">
+      <div class="modal__content">
+        <button class="modal__close">&times;</button>
+        <div id="day-shifts-modal-content" class="day-shifts-content">
+          <!-- Динамически заполняется через JavaScript -->
+        </div>
       </div>
     </div>
 
@@ -399,9 +409,9 @@
             <h4 class="footer__title">Контакты</h4>
             <ul class="footer__links">
               <li>
-                <a href="mailto:support@jettraker.com">support@jettraker.com</a>
+                <a href="mailto:Jettraker@gmail.com">Jettraker@gmail.com</a>
               </li>
-              <li><a href="tel:+78001234567">8 (800) 123-45-67</a></li>
+              <li><a href="https://t.me/amostovoj">@amostovoj</a></li>
             </ul>
           </div>
         </div>

@@ -23,10 +23,60 @@ document.addEventListener("DOMContentLoaded", function () {
     addVacationForm.addEventListener("submit", addFormSubmit);
   }
 
+  const deleteVacation = document.getElementById("delete-vacation-btn-submit");
+  if (deleteVacation) {
+    deleteVacation.addEventListener("click", handleDeleteVacation);
+  }
+
+  async function handleDeleteVacation(e) {
+    e.preventDefault();
+
+    deleteVacation.disabled = true;
+    deleteVacation.textContent = "Удаляем...";
+
+    const form = e.target;
+
+    const id = form.dataset.deleteId;
+
+    const token = localStorage.getItem("accessToken");
+
+    const response = await fetch(
+      `http://api.jettraker.com/api/vacation/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    );
+
+    deleteVacation.disabled = false;
+    deleteVacation.textContent = "Удалить";
+
+    if (!response.ok) {
+      showNotification("Не удалось удалить отпуск!", "error");
+      throw new Error(response.message || "Ошибка регистрации");
+    }
+
+    vacation = await response.json();
+
+    const index = config.vacation.findIndex((emp) => emp.id === vacation.id);
+
+    if (index !== -1) {
+      config.vacation.splice(index, 1);
+    }
+
+    showNotification("Успешно удалено!", "success");
+    renderVacation();
+    closeModal("edit-vacation-modal");
+  }
+
   async function loadEmployees() {
     const token = localStorage.getItem("accessToken");
 
-    fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/employee", {
+    fetch("https://api.jettraker.com/api/employee", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -61,12 +111,15 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://api.jettraker.com/api/user/profile",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         if (window.location.pathname !== "/") {
@@ -88,7 +141,7 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/vacation", {
+      const response = await fetch("https://api.jettraker.com/api/vacation", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -108,6 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function renderVacation(vacation = config.vacation) {
+    console.log(vacation);
     const tableBody = document.querySelector("#vacation-list");
     if (!tableBody) return;
     console.log("1", vacation);
@@ -172,8 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Заполняем форму данными сотрудника
     document.getElementById("edit-vacation-name").value = vacation.user.name;
-    document.getElementById("edit-vacation-type").value = vacation.type;
-    document.getElementById("edit-vacation-status").value = vacation.status;
+    // document.getElementById("edit-vacation-type").value = vacation.type;
     flatpickr("#edit-shift-date", {
       mode: "range",
       dateFormat: "Y-m-d",
@@ -227,7 +280,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     // Обновляем форму для редактирования
     const form = document.getElementById("edit-vacation-form");
+    const button = document.getElementById("delete-vacation-btn-submit");
     form.dataset.editId = vacationId;
+    button.dataset.deleteId = vacationId;
 
     openModal("edit-vacation-modal");
   }
@@ -251,15 +306,14 @@ document.addEventListener("DOMContentLoaded", function () {
       email: form["employee-position"].value,
       fromDate: fromDate,
       toDate: toDate,
-      type: form["vacation-type"].value,
-      status: form["vacation-status"].value,
+      // type: form["vacation-type"].value,
     };
 
     console.log(JSON.stringify(employee));
 
     const token = localStorage.getItem("accessToken");
 
-    const response = await fetch(`http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/vacation`, {
+    const response = await fetch(`https://api.jettraker.com/api/vacation`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -273,8 +327,8 @@ document.addEventListener("DOMContentLoaded", function () {
     submitAddButton.textContent = "Добавить";
 
     if (!response.ok) {
-      throw new Error(response.message || "Ошибка регистрации");
       showNotification("Не удалось добавить!", "error");
+      throw new Error(response.message || "Ошибка регистрации");
     }
 
     vacation = await response.json();
@@ -304,8 +358,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const employee = {
       fromDate: fromDate,
       toDate: toDate,
-      type: form["edit-vacation-type"].value,
-      status: form["edit-vacation-status"].value,
+      // type: form["edit-vacation-type"].value,
     };
 
     console.log(JSON.stringify(employee));
@@ -314,22 +367,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const id = parseInt(form.dataset.editId);
 
-    const response = await fetch(`http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/vacation/${id}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(employee),
-    });
+    const response = await fetch(
+      `https://api.jettraker.com/api/vacation/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(employee),
+      }
+    );
 
     submitEditButton.disabled = false;
     submitEditButton.textContent = "Обновить";
 
     if (!response.ok) {
-      throw new Error(response.message || "Ошибка регистрации");
       showNotification("Не удалось обновить сотрудника!", "error");
+      throw new Error(response.message || "Ошибка регистрации");
     }
 
     vacation = await response.json();
@@ -352,7 +408,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-      function showNotification(message, type, container = document.body) {
+  function showNotification(message, type, container = document.body) {
     const toast = document.createElement("div");
     toast.className = type === "success" ? "success-toast" : "error-toast";
     toast.innerText = message;

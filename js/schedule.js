@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const config = {
     schedules: [],
     employees: [],
+    isAdmin: false,
   };
 
   initApplication();
@@ -31,23 +32,32 @@ document.addEventListener("DOMContentLoaded", function () {
     loadSchedule();
   }
 
-      async function checkRole() {
+  async function checkRole() {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://api.jettraker.com/api/user/profile",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      console.log(response)
+      console.log(response);
 
       if (!response.ok) {
         if (window.location.pathname !== "/") {
           window.location.href = "/";
         }
+      }
+
+      const userData = await response.json();
+      console.log(userData);
+      if (userData.user.role === "MANAGER" || userData.user.role === "BOSS") {
+        config.isAdmin = true;
       }
     } catch (e) {
       if (window.location.pathname !== "/") {
@@ -57,7 +67,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function generateHeaderRow() {
-    const { year, month } = getQueryParams();
+    const year = currentDate.getFullYear() || new Date().getFullYear();
+    const month = currentDate.getMonth() + 1 || new Date().getMonth() + 1;
 
     const container = document.querySelector(".schedule-grid");
     container.innerHTML = ""; // Очищаем
@@ -99,6 +110,377 @@ document.addEventListener("DOMContentLoaded", function () {
     container.appendChild(headerRow);
   }
 
+  const calendarDay = document.getElementById("schedule-grid");
+  if (calendarDay) {
+    calendarDay.addEventListener("click", handleDayClick);
+  }
+
+  function handleDayClick(event) {
+    console.log(config.isAdmin);
+    if (!config.isAdmin) return;
+    const dayElement = event.target.closest(".calendar-day");
+    console.log(45);
+    if (!dayElement) return;
+
+    const dateStr = dayElement.dataset.date;
+    if (!dateStr) return;
+    const userId = dayElement.dataset.employee;
+    if (!userId) return;
+
+    // Показываем список смен на этот день
+    showShiftsForDate(dateStr, userId);
+  }
+
+  function getShiftsForDate(date, userId) {
+    console.log(userId);
+    console.log(config.schedules);
+    const index = config.schedules.findIndex(
+      (emp) => Number(emp.id) === Number(userId)
+    );
+    let employee;
+
+    if (index !== -1) {
+      employee = config.schedules[index];
+    }
+
+    console.log(employee.schedules);
+    console.log(employee);
+
+    const shift = employee.schedules.filter((shift) =>
+      isSameDay(new Date(shift.startTime), date)
+    );
+
+    return { employee, shift };
+  }
+
+  function isSameDay(date1, date2) {
+    console.log(date1, date2);
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  }
+
+  function showShiftsForDate(dateStr, userId) {
+    const date = new Date(dateStr);
+    const { employee, shift } = getShiftsForDate(date, userId);
+    const dateModal = new Date(dateStr);
+    console.log("ff", dateModal.getDay());
+
+    console.log(1, employee, shift);
+
+    const modalContent = document.getElementById("day-shifts-modal-content");
+    if (!modalContent) return;
+
+    modalContent.innerHTML = `
+        <h3 class="mb-2">${employee.name} - ${date.toLocaleDateString(
+      "ru-RU",
+      dateModal.getDate()
+    )}</h3>
+        ${
+          shift.length > 0
+            ? `
+            <form id="edit-shift-form">
+              <div class="form-group">
+                <label>
+                  Время начала:
+                  <input
+                    id="edit-start-date"
+                    type="time"
+                    name="start"
+                    required
+                  />
+                </label>
+              </div>
+              <div class="form-group">
+                <label>
+                  Время окончания:
+                  <input id="edit-end-date" type="time" name="end" required />
+                </label>
+              </div>
+              <div class="form-group">
+                <label>
+                  Тип смены:
+                  <select name="type" id="edit-shift-type" required>
+                    <option value="">Выберите тип</option>
+                    <option value="DAY">Дневная</option>
+                    <option value="NIGHT">Ночная</option>
+                    <option value="DAILY">Суточная</option>
+                    <option value="PART_TIME">Парт-тайм</option>
+                  </select>
+                </label>
+              </div>
+              ${
+                employee.paymentType === "HOURLY_RATE"
+                  ? `
+                  <div
+                    id="edit-hourly-rate-group"
+                    class="form-group"
+                  >
+                    <label for="edit-hourly-rate">Ставка (в час)</label>
+                    <input
+                      type="number"
+                      id="edit-hourly-rate"
+                      min="0"
+                      step="0.01"
+                    />
+                  </div>`
+                  : ""
+              }
+
+              <div class="submit-actions">
+                <button id="delete-shift-submit" class="btn">Удалить</button>
+                <button
+                  id="edit-shift-submit"
+                  type="submit"
+                  class="btn btn--primary"
+                >
+                  Сохранить
+                </button>
+              </div>
+            </form>`
+            : `<p>У сотрудника ${employee.name} на этот день смены нет</p>`
+        }
+    `;
+    const formatTime = (str) =>
+      new Date(str).toLocaleTimeString("ru-RU", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      });
+
+    if (shift.length > 0) {
+      document.getElementById("edit-start-date").value = formatTime(
+        shift[0].startTime
+      );
+      document.getElementById("edit-end-date").value = formatTime(
+        shift[0].endTime
+      );
+      document.getElementById("edit-shift-type").value = shift[0].type;
+      if (employee.paymentType === "HOURLY_RATE") {
+        console.log("222");
+        document.getElementById("edit-hourly-rate").value = shift[0].hourlyRate;
+      }
+
+      const form = document.getElementById("edit-shift-form");
+      form.dataset.editId = shift[0].id;
+      form.dataset.date = date.toLocaleDateString("ru-RU", dateModal.getDate());
+    }
+
+    const employeeDeleteForm = document.getElementById("delete-shift-submit");
+    if (employeeDeleteForm) {
+      employeeDeleteForm.dataset.id = shift[0].id;
+      employeeDeleteForm.addEventListener("click", handleDeleteShift);
+    }
+
+    const employeeEditForm = document.getElementById("edit-shift-form");
+    if (employeeEditForm) {
+      employeeEditForm.addEventListener("submit", handleEditShift);
+    }
+
+    // document.querySelectorAll("#edit-shift-submit").forEach((btn) => {
+    //   btn.addEventListener("click", handleEditShift);
+    // });
+
+    openModal("day-shifts-modal");
+  }
+
+  const employeeEditForm = document.getElementById("edit-shift-form");
+  if (employeeEditForm) {
+    employeeEditForm.addEventListener("submit", handleEditShift);
+  }
+
+  async function handleDeleteShift(e) {
+    e.preventDefault();
+
+    const submitEditButton = document.getElementById("delete-shift-submit");
+
+    submitEditButton.disabled = true;
+    submitEditButton.textContent = "Удаляем...";
+
+    const form = e.target;
+    const shiftId = form.dataset.id;
+
+    const token = localStorage.getItem("accessToken");
+
+    // const response = await fetch(`http://localhost:3000/api/shift/${shiftId}`, {
+    const response = await fetch(
+      `https://api.jettraker.com/api/shift/${shiftId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    );
+
+    submitEditButton.disabled = false;
+    submitEditButton.textContent = "Удалить";
+
+    if (!response.ok) {
+      showNotification("Не удалось удалить!", "error");
+      throw new Error(response.message || "Ошибка регистрации");
+    }
+
+    function findSchedule(userId, scheduleId) {
+      const user = config.schedules.find((user) => user.id === userId);
+      const userIndex = config.schedules.findIndex(
+        (user) => user.id === userId
+      );
+
+      if (user) {
+        const scheduleIndex = config.schedules[userIndex].schedules.findIndex(
+          (schedule) => schedule.id === scheduleId
+        );
+
+        return {
+          userId: userIndex,
+          scheduleId: scheduleIndex,
+        };
+      }
+      return null;
+    }
+
+    const schedulesData = await response.json();
+
+    if (schedulesData) {
+      const ids = findSchedule(schedulesData.userId, schedulesData.id);
+
+      console.log(ids);
+
+      console.log(config.schedules);
+      console.log(config.schedules[ids.userId]);
+
+      config.schedules[ids.userId].schedules.splice(ids.scheduleId, 1);
+      // config.schedules[ids.userId].schedules[ids.scheduleId] = schedulesData;
+    }
+
+    showNotification("Смена успешно удалена!", "success");
+    renderScheduleTable();
+    closeModal("day-shifts-modal");
+    // form.reset();
+  }
+
+  async function handleEditShift(e) {
+    console.log("1");
+    e.preventDefault();
+
+    const submitEditButton = document.getElementById("edit-shift-submit");
+
+    submitEditButton.disabled = true;
+    submitEditButton.textContent = "Сохраняем...";
+
+    const form = e.target;
+    const shiftId = form.dataset.editId;
+    const date = form.dataset.date;
+
+    const parts = date.split(".");
+    const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+
+    const startTime = form["edit-start-date"].value;
+    const endTime = form["edit-end-date"].value;
+    const type = form["edit-shift-type"].value;
+    let hourlyRate = 0;
+    if (form["edit-hourly-rate"]) {
+      hourlyRate = Number(form["edit-hourly-rate"].value);
+    }
+    console.log(`${formattedDate}T${startTime}`);
+
+    const start = new Date(`${formattedDate}T${startTime}`);
+    let end;
+
+    console.log(formattedDate, start);
+    console.log(start, startTime);
+
+    if (type === "DAILY") {
+      end = new Date(start);
+      end.setHours(end.getHours() + 24);
+    } else {
+      end = new Date(`${formattedDate}T${endTime}`);
+      console.log(formattedDate, endTime);
+      if (end <= start) {
+        end.setDate(end.getDate() + 1);
+      }
+    }
+
+    console.log(start.toISOString());
+    console.log(end.toISOString());
+
+    const shift = {
+      startTime: start.toISOString(),
+      endTime: end.toISOString(),
+      type: form["edit-shift-type"].value,
+      hourlyRate,
+    };
+
+    console.log(JSON.stringify(shift));
+
+    const token = localStorage.getItem("accessToken");
+
+    // const response = await fetch(`http://localhost:3000/api/shift/${shiftId}`, {
+    const response = await fetch(
+      `https://api.jettraker.com/api/shift/${shiftId}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(shift),
+      }
+    );
+
+    submitEditButton.disabled = false;
+    submitEditButton.textContent = "Сохранить";
+
+    if (!response.ok) {
+      console.log(response);
+      showNotification("Не удалось обновить!", "error");
+      throw new Error(response.message || "Ошибка регистрации");
+    }
+
+    function findSchedule(userId, scheduleId) {
+      const user = config.schedules.find((user) => user.id === userId);
+      const userIndex = config.schedules.findIndex(
+        (user) => user.id === userId
+      );
+
+      if (user) {
+        const scheduleIndex = config.schedules[userIndex].schedules.findIndex(
+          (schedule) => schedule.id === scheduleId
+        );
+
+        return {
+          userId: userIndex,
+          scheduleId: scheduleIndex,
+        };
+      }
+      return null;
+    }
+
+    const schedulesData = await response.json();
+
+    if (schedulesData) {
+      const ids = findSchedule(schedulesData.userId, schedulesData.id);
+
+      console.log(ids);
+
+      console.log(config.schedules);
+      console.log(config.schedules[ids.userId]);
+
+      config.schedules[ids.userId].schedules[ids.scheduleId] = schedulesData;
+    }
+
+    showNotification("Смена успешно изменена!", "success");
+    renderScheduleTable();
+    closeModal("day-shifts-modal");
+    form.reset();
+  }
+
   function updateCalendar() {
     const options = { month: "long", year: "numeric" };
     currentMonthElement.textContent = currentDate.toLocaleDateString(
@@ -112,41 +494,59 @@ document.addEventListener("DOMContentLoaded", function () {
     // Для демонстрации просто обновляем дату
   }
 
-    async function updateTable() {
-      const data = await fetchSchedule(currentDate.getMonth() + 1, currentDate.getFullYear());
-      console.log(data);
-      renderScheduleTable();
+  async function updateTable() {
+    const data = await fetchSchedule(
+      currentDate.getMonth() + 1,
+      currentDate.getFullYear()
+    );
+    console.log(data);
+    renderScheduleTable();
   }
 
   prevMonthBtn.addEventListener("click", function () {
     currentDate.setMonth(currentDate.getMonth() - 1);
     updateCalendar();
-    updateTable()
+    updateTable();
   });
 
   nextMonthBtn.addEventListener("click", function () {
     currentDate.setMonth(currentDate.getMonth() + 1);
     updateCalendar();
-    updateTable()
+    updateTable();
   });
 
-  document.getElementById("department-filter").addEventListener("change", async () => {
-    const data = await fetchSchedule(currentDate.getMonth() + 1, currentDate.getFullYear());
-    console.log(data);
+  document
+    .getElementById("department-filter")
+    .addEventListener("change", async () => {
+      const data = await fetchSchedule(
+        currentDate.getMonth() + 1,
+        currentDate.getFullYear()
+      );
+      console.log(data);
       renderScheduleTable();
-  });
+    });
 
-  document.getElementById("employee-filter").addEventListener("change", async () => {
-    const data = await fetchSchedule(currentDate.getMonth() + 1, currentDate.getFullYear());
-    console.log(data);
+  document
+    .getElementById("employee-filter")
+    .addEventListener("change", async () => {
+      const data = await fetchSchedule(
+        currentDate.getMonth() + 1,
+        currentDate.getFullYear()
+      );
+      console.log(data);
       renderScheduleTable();
-  });
+    });
 
-  document.getElementById("shift-type-filter").addEventListener("change", async () => {
-    const data = await fetchSchedule(currentDate.getMonth() + 1, currentDate.getFullYear());
-    console.log(data);
+  document
+    .getElementById("shift-type-filter")
+    .addEventListener("change", async () => {
+      const data = await fetchSchedule(
+        currentDate.getMonth() + 1,
+        currentDate.getFullYear()
+      );
+      console.log(data);
       renderScheduleTable();
-  });
+    });
 
   function getQueryParam(name) {
     const params = new URLSearchParams(window.location.search);
@@ -156,55 +556,55 @@ document.addEventListener("DOMContentLoaded", function () {
   async function fetchSchedule(month, year) {
     console.log(month, year);
 
-    const grid = document.querySelector(".schedule-grid")
+    const grid = document.querySelector(".schedule-grid");
     generateHeaderRow();
     const row = document.createElement("div");
-    row.innerHTML= 'Загрузка...';
+    row.innerHTML = "Загрузка...";
     grid.appendChild(row);
 
     const token = localStorage.getItem("accessToken");
 
-      const departmentValue = document.getElementById("department-filter").value;
-  const employeeValue = document.getElementById("employee-filter").value;
-  const shiftTypeValue = document.getElementById("shift-type-filter").value;
+    const departmentValue = document.getElementById("department-filter").value;
+    const employeeValue = document.getElementById("employee-filter").value;
+    const shiftTypeValue = document.getElementById("shift-type-filter").value;
 
-  // Собираем query параметры
-  const params = new URLSearchParams();
+    // Собираем query параметры
+    const params = new URLSearchParams();
 
-  if (month && year) {
-    params.append("month", month);
-    params.append("year", year);
-  }
-
-  if (departmentValue !== "all") {
-    params.append("subunit", departmentValue); // отправляется как ?subunit=sales
-  }
-
-  if (employeeValue === "me") {
-    params.append("onlyMine", "true");
-  }
-
-  if (shiftTypeValue !== "all") {
-    let type = "";
-    switch (shiftTypeValue) {
-      case "day":
-        type = "DAY";
-        break;
-      case "night":
-        type = "NIGHT";
-        break;
-      case "full-day":
-        type = "DAILY";
-        break;
-      case "part-time":
-        type = "PART_TIME";
-        break;
+    if (month && year) {
+      params.append("month", month);
+      params.append("year", year);
     }
-    params.append("type", type);
-  }
+
+    if (departmentValue !== "all") {
+      params.append("subunit", departmentValue); // отправляется как ?subunit=sales
+    }
+
+    if (employeeValue === "me") {
+      params.append("onlyMine", "true");
+    }
+
+    if (shiftTypeValue !== "all") {
+      let type = "";
+      switch (shiftTypeValue) {
+        case "day":
+          type = "DAY";
+          break;
+        case "night":
+          type = "NIGHT";
+          break;
+        case "full-day":
+          type = "DAILY";
+          break;
+        case "part-time":
+          type = "PART_TIME";
+          break;
+      }
+      params.append("type", type);
+    }
 
     const response = await fetch(
-      `http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/shift?${params.toString()}`,
+      `https://api.jettraker.com/api/shift?${params.toString()}`,
       {
         method: "GET",
         headers: {
@@ -235,10 +635,28 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  function formatDateForAPI(date) {
+    const localDate = new Date(date);
+    localDate.setDate(localDate.getDate() + 1); // Добавляем один день
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      timeZone: "UTC",
+    };
+    const formattedDate = localDate.toLocaleDateString("en-CA", options); // Формат ГГГГ-ММ-ДД
+    return formattedDate;
+  }
+
+  const daysInMonth = getDaysInMonth(currentDate);
+
+  function getDaysInMonth(date) {
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  }
   function renderScheduleTable() {
     const params = new URLSearchParams(window.location.search);
-    const year = params.get("year") || new Date().getFullYear();
-    const month = params.get("month") || new Date().getMonth() + 1;
+    const year = currentDate.getFullYear() || new Date().getFullYear();
+    const month = currentDate.getMonth() + 1 || new Date().getMonth() + 1;
 
     const grid = document.querySelector(".schedule-grid");
 
@@ -278,7 +696,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // 2. Ячейки по дням месяца
       for (let day = 1; day <= 31; day++) {
+        const date = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          day
+        );
         const cell = document.createElement("div");
+        const daysInMonth = getDaysInMonth(currentDate);
+        if (day <= daysInMonth) {
+          cell.classList.add("calendar-day");
+          cell.dataset.date = formatDateForAPI(date);
+          cell.dataset.employee = employee.id;
+        }
         cell.classList.add("schedule-cell");
 
         const dateStr = `${year}-${String(month).padStart(2, "0")}-${String(
@@ -287,7 +716,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const shift = employee.schedules.find((s) =>
           s.startTime.startsWith(dateStr)
         );
-        if (shift) {
+        if (shift && day <= daysInMonth) {
           cell.textContent = `${formatTime(shift.startTime)}–${formatTime(
             shift.endTime
           )}`;
@@ -314,55 +743,55 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  async function loadEmployees() {
+    const token = localStorage.getItem("accessToken");
 
+    try {
+      const res = await fetch("https://api.jettraker.com/api/employee", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-async function loadEmployees() {
-  const token = localStorage.getItem("accessToken");
+      if (!res.ok) {
+        throw new Error("Ошибка авторизации или запроса");
+      }
 
-  try {
-    const res = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/employee", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      const employees = await res.json();
+      config.employees = employees; // Сохраняем глобально
 
-    if (!res.ok) {
-      throw new Error("Ошибка авторизации или запроса");
+      const select = document.getElementById("shift-employee");
+      if (!select) return;
+
+      select.innerHTML = `<option value="">Выберите имя</option>`;
+
+      employees.forEach((employee) => {
+        const option = document.createElement("option");
+        option.value = employee.email; // ключ для идентификации
+        option.textContent = employee.name;
+        select.appendChild(option);
+      });
+    } catch (error) {
+      console.error("Ошибка при загрузке сотрудников:", error);
     }
-
-    const employees = await res.json();
-    config.employees = employees; // Сохраняем глобально
-
-    const select = document.getElementById("shift-employee");
-    if (!select) return;
-
-    select.innerHTML = `<option value="">Выберите имя</option>`;
-
-    employees.forEach((employee) => {
-      const option = document.createElement("option");
-      option.value = employee.email; // ключ для идентификации
-      option.textContent = employee.name;
-      select.appendChild(option);
-    });
-  } catch (error) {
-    console.error("Ошибка при загрузке сотрудников:", error);
   }
-}
 
-document.getElementById("shift-employee").addEventListener("change", (e) => {
-  const selectedEmail = e.target.value;
-  const selectedEmployee = config.employees.find(emp => emp.email === selectedEmail);
+  document.getElementById("shift-employee").addEventListener("change", (e) => {
+    const selectedEmail = e.target.value;
+    const selectedEmployee = config.employees.find(
+      (emp) => emp.email === selectedEmail
+    );
 
-  const rateGroup = document.getElementById("hourly-rate-group");
+    const rateGroup = document.getElementById("hourly-rate-group");
 
-  if (selectedEmployee && selectedEmployee.paymentType === "HOURLY_RATE") {
-    rateGroup.style.display = "block";
-  } else {
-    rateGroup.style.display = "none";
-  }
-});
+    if (selectedEmployee && selectedEmployee.paymentType === "HOURLY_RATE") {
+      rateGroup.style.display = "block";
+    } else {
+      rateGroup.style.display = "none";
+    }
+  });
 
   // Обработка формы добавления смены
   const shiftForm = document.getElementById("new-shift-form");
@@ -408,9 +837,13 @@ document.getElementById("shift-employee").addEventListener("change", (e) => {
         return alert("Пожалуйста, заполните все поля");
       }
 
+      console.log(`${date}T${startTime}`);
+
       // Формируем полные даты
       const start = new Date(`${date}T${startTime}`);
       let end;
+
+      console.log(date, startTime);
 
       if (type === "DAILY") {
         end = new Date(start);
@@ -427,14 +860,14 @@ document.getElementById("shift-employee").addEventListener("change", (e) => {
         startTime: start.toISOString(),
         endTime: end.toISOString(),
         type,
-        hourlyRate 
+        hourlyRate,
       };
 
       console.log(payload);
 
       try {
         const token = localStorage.getItem("accessToken");
-        const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/shift", {
+        const response = await fetch("https://api.jettraker.com/api/shift", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -495,7 +928,7 @@ document.getElementById("shift-employee").addEventListener("change", (e) => {
     }
   }
 
-    function showNotification(message, type, container = document.body) {
+  function showNotification(message, type, container = document.body) {
     const toast = document.createElement("div");
     toast.className = type === "success" ? "success-toast" : "error-toast";
     toast.innerText = message;

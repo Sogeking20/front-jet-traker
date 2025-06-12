@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Конфигурация модуля
   const config = {
-    apiBaseUrl: "http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api",
+    apiBaseUrl: "https://api.jettraker.com/api",
     pdfGeneratorUrl: "https://pdfgen.yourdomain.com",
     defaultPeriod: "current-month",
     notificationDuration: 5000,
@@ -41,12 +41,15 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://jettraker-backend-sflk2d-23d059-109-107-189-7.traefik.me//api/user/profile", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://api.jettraker.com/api/user/profile",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (!response.ok) {
         if (window.location.pathname !== "/") {
           window.location.href = "/";
@@ -283,7 +286,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     tableBody.innerHTML = "";
 
-        const salaryAll = document.querySelector("#salary-all");
+    const salaryAll = document.querySelector("#salary-all");
     const salaryDetail = document.querySelector("#card-salary-detail");
     const salaryDay = document.querySelector("#card-salary-day");
     const salaryNight = document.querySelector("#card-salary-night");
@@ -308,7 +311,7 @@ document.addEventListener("DOMContentLoaded", function () {
       emptyRow.innerHTML = `<td colspan="7" class="text-center">Ничего не найдены</td>`;
       tableBody.appendChild(emptyRow);
 
-            salaryAll.innerHTML = `0 <span>₽</span>`;
+      salaryAll.innerHTML = `0 <span>₽</span>`;
       salaryDetail.innerHTML = `0 <span>₽</span>`;
       salaryDay.innerHTML = `0 <span>₽</span>`;
       salaryNight.innerHTML = `0 <span>₽</span>`;
